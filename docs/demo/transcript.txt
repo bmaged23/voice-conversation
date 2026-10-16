@@ -1,0 +1,61 @@
+[You]
+Hey, I'm excited. I'm planning a surprise birthday picnic for my sister this Saturday. Can you help me make it special? Keep it conversational.
+
+[Voca]
+Oh, how wonderful! A surprise picnic is such a lovely way to celebrate. I'm already picturing colorful blankets, tasty treats, and laughter in the park.
+
+Since Saturday is coming up, what's your sister's favorite snack or drink? I'd love to help you plan the perfect menu that'll make her day extra special.
+
+[You]
+There will be six of us. My budget is $80 and she loves space. What could we do?
+
+[Voca — interrupted; not all displayed text was played]
+Six people with an $80 budget is totally doable! For space-themed magic, I'd suggest homemade galaxy cupcakes (food coloring in blues and purples) and popcorn served in rocket-shaped cones. You could print free constellation maps online and spread them as tablecloths. With $80, you could grab juice boxes, fresh fruit, and maybe a small cake. The key is DIY decorations—think silver streamers and cardboard "planets." What's your sister's age? That'll help me tailor the space theme perfectly for her!
+
+[You]
+Actually, one important detail. One friend is vegan, so let's make all the food vegan. How would you split the budget?
+
+[Voca]
+That's so thoughtful to make it fully vegan for everyone! With $80 for six people, that's about $13 per person. I'd suggest putting $30 toward main dishes like vegan sandwiches or wraps, $20 for fresh fruit and snacks, $15 for drinks like sparkling juice, and $15 for disposable plates, cups, and maybe a small bouquet of wildflowers. Would you like ideas for easy vegan sandwich fillings or refreshing drinks that fit the space theme?
+
+[You]
+Great, we already have blankets and a speaker. What easy food would fit that plan without needing to cook at the park?
+
+[Voca]
+Perfect! Since you have blankets and a speaker, I'd suggest vegan deli-style sandwiches with hummus, avocado, and crisp veggies—no cooking needed. Pack fruit salad with berries and melon, plus store-bought vegan cookies or brownies. Don't forget sparkling cider or flavored water in a insulated jug. Everything can be assembled at home, transported cool in a cooler, and enjoyed right on the blanket. Would you like specific sandwich combinations or just the general idea?
+
+[You]
+I like the idea of a space theme. Can you suggest one fun activity that works for six people and costs almost nothing?
+
+[Voca]
+A constellation hunt is perfect and costs nothing! Print or draw simple star patterns on paper, then head to the park after sunset. Each person gets a card to find the matching star cluster in the real sky. It's magical, educational, and fits your space theme beautifully. Plus, you can lie on the blankets and make wishes on shooting stars together. Would you like me to describe how to make the constellation cards, or do you have a printer ready?
+
+[You]
+Let's call this a birthday mission. Give me a short opening line I can say when she arrives. Make it exciting.
+
+[Voca]
+"Hey! Close your eyes—we've got a space mission waiting for you!"
+
+[You]
+Now the tricky part. The forecast might change. If it rains, how can we keep the same theme indoors without spending more?
+
+[Voca]
+Move the picnic to your living room! Lay out the blankets on the floor, keep the speaker playing space sounds, and do the constellation hunt by flashlight. Serve the same vegan snacks from the cooler. The theme stays intact—just swap the park sky for your ceiling. Would you like tips on creating a "roof of stars" with string lights or glow-in-the-dark stickers?
+
+[You]
+We can use my living room as the backup. Help me plan a simple preparation timeline starting Friday evening.
+
+[Voca]
+Friday evening: print or draw constellation cards, prep vegan sandwiches and fruit salad, and pack the cooler. Saturday morning: load blankets, speaker, and snacks into the car. Saturday afternoon: set up indoors or outdoors, play the space mission game, and celebrate! Keep the cooler cold with ice packs, and you're golden.
+
+[You]
+Before I invite everyone, remind me of our guest count, total budget, food restriction, and backup location.
+
+[Voca]
+Six guests, $80 budget, fully vegan food, and your living room as the rain backup. You've got this!
+
+[You]
+Perfect. Give me a cheerful invitation message with a space theme, but don't spoil the surprise. I'll add the time and address myself.
+
+[Voca]
+"Hey friends! I'm planning a surprise picnic under the stars for my sister's birthday, and you're invited! Get ready for cosmic vibes, tasty treats, and a fun constellation hunt. I'd love for you to join the adventure—just don't tell her! See you Saturday at [time] at [address]. Bring your curiosity!"

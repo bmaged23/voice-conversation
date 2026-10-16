@@ -1,0 +1,18 @@
+{
+  "recorded_utc": "2026-10-16T00:05:05Z",
+  "llm_model": "nemotron-3-nano:30b",
+  "user_voice": "Kokoro am_michael (synthetic)",
+  "assistant_voice": "af_heart",
+  "mocked_responses": false,
+  "prompt_count": 10,
+  "duration_seconds": 289.0,
+  "video_bytes": 10746362,
+  "audio_offset_ms": 0,
+  "soundtrack_capture": "actual browser audio buffers with playback start/stop timestamps",
+  "codecs": [
+    "h264",
+    "aac"
+  ],
+  "real_interruption_verified": true,
+  "post_conversation_export_wait_removed": true
+}
