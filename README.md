@@ -12,25 +12,6 @@ The video player and interactive diagram are hosted with GitHub Pages. You can a
 
 ## Voice pipeline — inputs and outputs
 
-```mermaid
-flowchart TD
-    User([You speak]) -->|IN: English speech| Mic[Browser microphone]
-    Mic -->|OUT: 16 kHz mono PCM frames| VAD[Silero VAD · CPU]
-    VAD -->|OUT: detected speech turn| STT[Whisper small.en · GPU]
-    STT -->|OUT: rolling previews| UI[Live transcript in the UI]
-    STT -->|OUT: final English text| LLM[Nemotron Nano 30B · Ollama Cloud]
-    History[Completed conversation history] -->|IN: context| LLM
-    LLM -->|OUT: streaming text tokens| Chunks[Phrase buffer]
-    Chunks -->|OUT: short text phrases| TTS[Kokoro TTS · CPU]
-    TTS -->|OUT: PCM audio chunks| Speaker[Browser speaker · ordered playback]
-    Speaker -->|OUT: spoken English reply| Listen([You hear the answer])
-    Speaker -->|Playback complete: retain heard phrases| History
-    VAD -.->|New speech: cancel response and clear queued audio| Chunks
-    VAD -.->|New speech: stop playback| Speaker
-```
-
-### Animated pipeline
-
 [![Animated voice pipeline with IN and OUT ports and directional arrows](docs/assets/architecture.gif)](https://bmaged23.github.io/voice-conversation/architecture.html)
 
 **[Open the interactive animated diagram](https://bmaged23.github.io/voice-conversation/architecture.html)** — connected entities, input/output arrows, streaming data packets, playback acknowledgments and interruption control.
