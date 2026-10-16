@@ -4,9 +4,20 @@ A local voice playground that lets you talk naturally with an AI assistant. Your
 
 Built by **Bola Maged Ramses Nessim**.
 
-[![Voca conversation demo](docs/demo/poster.png)](docs/demo/conversation-demo.mp4)
-
-**[Open the video player](https://bmaged23.github.io/voice-conversation/demo.html)** · **[Watch / download the MP4](docs/demo/conversation-demo.mp4)** · **[Conversation transcript](docs/demo/transcript.txt)**
+<table>
+  <tr>
+    <td align="center" width="180">
+      <a href="https://bmaged23.github.io/voice-conversation/demo.html" aria-label="Play conversation demo">
+        <img src="docs/assets/play-demo.svg" alt="Play demo" width="164" height="58">
+      </a>
+    </td>
+    <td>
+      <a href="https://bmaged23.github.io/voice-conversation/demo.html">
+        <img src="docs/demo/poster.png" alt="Voca conversation demo" width="760">
+      </a>
+    </td>
+  </tr>
+</table>
 
 The demo follows a ten-turn birthday-picnic planning conversation with a real interruption, with a synthesized demo-user voice and live assistant responses. No narrated walkthrough or mocked replies. See [recording details](docs/demo/README.md).
 
