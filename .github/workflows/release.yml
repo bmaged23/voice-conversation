@@ -17,6 +17,7 @@ on:
       - 'docs/assets/model-manifest.json'
       - '.dockerignore'
       - '!scripts/**/*.md'
+      - '!scripts/documentation/**'
       - '!deployment/**/*.md'
 permissions:
   contents: read
@@ -91,13 +92,19 @@ jobs:
       - name: Pull exact staging candidate
         run: docker pull "$CANDIDATE"
       - name: Evaluate candidate GPU models and complete browser flows
-        run: .venv/bin/python -m scripts.release.qualify_gpu_image --image "$CANDIDATE" --source-sha "$GITHUB_SHA"
+        run: |
+          .venv/bin/python -m scripts.documentation.measure_container_resources --output "$RUNNER_TEMP/voca-container-resources.json" &
+          monitor=$!
+          trap 'kill -TERM "$monitor" 2>/dev/null || true; wait "$monitor" || true' EXIT
+          .venv/bin/python -m scripts.release.qualify_gpu_image --image "$CANDIDATE" --source-sha "$GITHUB_SHA"
       - name: Preserve public aggregate gate evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: voca-gpu-qualification
-          path: .evaluation-local/image-gate/gate-summary.json
+          path: |
+            .evaluation-local/image-gate/gate-summary.json
+            ${{ runner.temp }}/voca-container-resources.json
           if-no-files-found: warn
           retention-days: 30
   publish:

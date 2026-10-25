@@ -36,6 +36,10 @@ This is a modular STT → LLM → TTS pipeline. Whisper uses rolling windows rat
 
 ## Evaluation and API
 
+![Measured CPU and GPU component latency](docs/evaluation/charts/component-latency.png)
+
+![Baseline speech recognition error rates and independent TTS agreement](docs/evaluation/charts/speech-error-rates.png)
+
 The [evaluation report](docs/evaluation/README.md) records frozen cases, baseline failures,
 CPU/GPU comparisons and limitations. Kokoro's paired 32-phrase generation benchmark
 improved from **2.093 s on CPU to 0.418 s on GPU**; this is synthesis timing, not a

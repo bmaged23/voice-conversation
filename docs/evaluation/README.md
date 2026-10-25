@@ -14,7 +14,12 @@ Cloud LLM hardware is outside local resource measurements.
 | Original CPU-TTS browser journeys | 20 turns | **16/20** checks passed; failures retained |
 | GPU interruption and recovery regression | 6 turns | **6/6** passed |
 | Full GPU browser journeys | 20 turns | **17/20** checks passed, zero JavaScript errors |
-| Offline unit/regression tests | 10 | **10/10** passed |
+| Clarification development dialogue revision | 21 turns | **18/21** passed; three homophone teaching failures retained |
+| Offline unit/regression tests | 14 | **14/14** passed |
+
+![Measured component inference](charts/component-latency.png)
+
+![Baseline error rates](charts/speech-error-rates.png)
 
 Aggregate machine-readable evidence is in [measurements](measurements/).
 Frozen references and case definitions are under [`evaluation/datasets`](../../evaluation/datasets).
@@ -69,3 +74,26 @@ a model regression or silently overwritten. The corrected six-case suite passed.
 
 The complete GPU browser rerun passed 17/20 checks. The remaining failures are the story summary (omitted names/place and changed cancellation into missing a train) and the ambiguous teaching request plus its follow-up. Recovery and silence passed. A documentation rendering job briefly overlapped this functional run; its latency observations are not a dedicated isolated performance qualification. Docker image qualification and release
 CI remain pending; this report does not claim that they have passed.
+
+## Subsequent fixes and release policy
+
+Removing a rigid response word count and explicitly preserving causes fixed the
+targeted story-summary regression. Both Nemotron and Gemma were compared on the same
+captured development transcripts; neither reliably recovered the intended spelling
+after Whisper rendered both words as “effect”. Gemma was not adopted on this evidence.
+
+Version 2 of the dialogue adds a user clarification, retaining all 20 original
+waveforms by hash and generating one additional input. Its native run passed 18/21:
+the same three teaching turns remain limitations. The old version and results are
+preserved. This revision tests clarification behavior; it is not a held-out benchmark.
+The [release policy](../../evaluation/release_policy.json), frozen before image
+qualification, requires all 18 other turns and at least 18/21 overall, alongside
+explicit STT/TTS completion and error-rate thresholds. Known teaching failures stay
+in the total and reports; this does not imply 21/21 accuracy.
+
+Protocol regressions reproduce and prevent malformed playback acknowledgements
+crashing a pending reply or crediting unplayed phrases. Browser transport checks
+deliver an 80-frame burst in order without closing the session and reject prolonged
+overflow at a bounded queue size. Fourteen offline tests cover these behaviors,
+origin/session rejection, invalid controls and audio frames, interruption timing,
+cloud content deadlines and phrase/playback ordering.

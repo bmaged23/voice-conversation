@@ -1,0 +1,71 @@
+{
+  "selected": 21,
+  "completed": 21,
+  "passed": 18,
+  "javascript_errors": [],
+  "failed": [
+    {
+      "case_id": "teaching-difference",
+      "checks": [
+        "answer_0"
+      ]
+    },
+    {
+      "case_id": "teaching-clarification",
+      "checks": [
+        "answer_0"
+      ]
+    },
+    {
+      "case_id": "teaching-examples",
+      "checks": [
+        "answer_0"
+      ]
+    }
+  ],
+  "metrics": {
+    "reference_words": 276,
+    "reference_characters": 1548,
+    "word_errors": 29,
+    "character_errors": 130,
+    "substitutions": 20,
+    "deletions": 9,
+    "insertions": 0,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 20,
+    "wer": 0.10507246376811594,
+    "cer": 0.08397932816537468,
+    "exact_rate": 0.45
+  },
+  "resources": {
+    "samples": 494,
+    "metrics": {
+      "rss_mib": {
+        "mean": 2457.603436551113,
+        "peak": 2522.46484375
+      },
+      "cpu_percent_one_core": {
+        "mean": 133.7910931174089,
+        "peak": 527.2
+      },
+      "cpu_percent_machine": {
+        "mean": 11.149257759784076,
+        "peak": 43.93333333333334
+      },
+      "system_ram_used_mib": {
+        "mean": 2883.0842611336034,
+        "peak": 2963.34765625
+      },
+      "gpu_vram_mib": {
+        "mean": 1210.8704453441296,
+        "peak": 1797.0
+      },
+      "gpu_util_percent": {
+        "mean": 18.728744939271255,
+        "peak": 65.0
+      }
+    },
+    "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
+  },
+  "scope": "Actual browser, real-time synthetic input, actual model/cloud path except explicitly injected fault. Native process tree includes child server; external-server mode excludes its CPU/RAM."
+}
