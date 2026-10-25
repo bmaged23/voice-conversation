@@ -1,0 +1,110 @@
+{
+  "selected": 64,
+  "completed": 64,
+  "failed": 0,
+  "model_load_seconds": 2.104825916000209,
+  "device": "cuda",
+  "human": {
+    "reference_words": 1015,
+    "reference_characters": 5718,
+    "word_errors": 67,
+    "character_errors": 160,
+    "substitutions": 45,
+    "deletions": 9,
+    "insertions": 13,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 40,
+    "wer": 0.06600985221674877,
+    "cer": 0.027981811822315496,
+    "exact_rate": 0.375
+  },
+  "development_human": {
+    "reference_words": 552,
+    "reference_characters": 3109,
+    "word_errors": 42,
+    "character_errors": 107,
+    "substitutions": 28,
+    "deletions": 4,
+    "insertions": 10,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 20,
+    "wer": 0.07608695652173914,
+    "cer": 0.03441621100032165,
+    "exact_rate": 0.35
+  },
+  "validation_human": {
+    "reference_words": 463,
+    "reference_characters": 2609,
+    "word_errors": 25,
+    "character_errors": 53,
+    "substitutions": 17,
+    "deletions": 5,
+    "insertions": 3,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 20,
+    "wer": 0.05399568034557235,
+    "cer": 0.020314296665389038,
+    "exact_rate": 0.4
+  },
+  "stress": {
+    "reference_words": 402,
+    "reference_characters": 2187,
+    "word_errors": 67,
+    "character_errors": 159,
+    "substitutions": 42,
+    "deletions": 15,
+    "insertions": 10,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 18,
+    "wer": 0.16666666666666666,
+    "cer": 0.07270233196159122,
+    "exact_rate": 0.3888888888888889
+  },
+  "nonspeech": {
+    "reference_words": 0,
+    "reference_characters": 0,
+    "word_errors": 4,
+    "character_errors": 12,
+    "substitutions": 0,
+    "deletions": 0,
+    "insertions": 4,
+    "hallucinated_words_on_empty_reference": 4,
+    "samples": 6,
+    "wer": 4.0,
+    "cer": 12.0,
+    "exact_rate": 0.3333333333333333
+  },
+  "median_decode_seconds": 0.4029805990001023,
+  "median_rtf": 0.041082121964915584,
+  "resources": {
+    "samples": 53,
+    "metrics": {
+      "rss_mib": {
+        "mean": 606.6430571933962,
+        "peak": 626.9765625
+      },
+      "cpu_percent_one_core": {
+        "mean": 326.7320754716981,
+        "peak": 714.3
+      },
+      "cpu_percent_machine": {
+        "mean": 27.227672955974842,
+        "peak": 59.525
+      },
+      "system_ram_used_mib": {
+        "mean": 2052.758623231132,
+        "peak": 2153.7421875
+      },
+      "gpu_vram_mib": {
+        "mean": 474.1132075471698,
+        "peak": 555.0
+      },
+      "gpu_util_percent": {
+        "mean": 39.924528301886795,
+        "peak": 52.0
+      }
+    },
+    "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
+  },
+  "scope": "Offline whole-recording final decode, not real-time endpoint/preview/cloud/TTS latency. Nonspeech probes bypass VAD and are not automatically live user turns. Stress variants are not independent recordings. WER/CER use lowercase NFKC and punctuation-to-space normalization with literal number spellings."
+}

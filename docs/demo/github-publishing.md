@@ -12,4 +12,4 @@ and reviewed media are published by pushing to `main`.
 
 Keep `.env`, `.venv`, `models`, caches, logs and raw recording frames excluded.
 The static video player needs no API key, GPU, Python backend or speech models.
-The live microphone conversation runs locally through `scripts/serve.py`.
+The live microphone conversation runs locally through `scripts/application/start_voice_app.py`.

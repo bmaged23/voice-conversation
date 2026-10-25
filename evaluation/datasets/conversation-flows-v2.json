@@ -1,0 +1,321 @@
+{
+  "version": 2,
+  "language": "en",
+  "input_voice": "Kokoro am_michael, synthetic and different from assistant voice",
+  "maximum_upstream_requests": 30,
+  "sessions": [
+    {
+      "session_id": "planning-and-corrections",
+      "turns": [
+        {
+          "case_id": "plan-start",
+          "text": "I am planning a surprise birthday picnic for Emma. There will be six people, my budget is eighty dollars, all food must be vegan, and one guest has a peanut allergy. Briefly repeat those constraints.",
+          "expected_any": [
+            [
+              "six",
+              "6"
+            ],
+            [
+              "eighty",
+              "80"
+            ],
+            [
+              "vegan"
+            ],
+            [
+              "peanut"
+            ]
+          ]
+        },
+        {
+          "case_id": "plan-update",
+          "text": "Change the plan: there will be seven people and the budget is now ninety dollars. Briefly confirm the updated numbers.",
+          "expected_any": [
+            [
+              "seven",
+              "7"
+            ],
+            [
+              "ninety",
+              "90"
+            ]
+          ]
+        },
+        {
+          "case_id": "plan-snack",
+          "text": "Suggest one simple snack that fits our food restrictions.",
+          "expected_any": [
+            [
+              "fruit",
+              "vegetable",
+              "hummus",
+              "vegan"
+            ]
+          ],
+          "forbidden": [
+            "peanut butter",
+            "chicken sandwich"
+          ]
+        },
+        {
+          "case_id": "plan-arithmetic",
+          "text": "From our current budget, we spend twenty four dollars on food and eighteen dollars on decorations. How many dollars remain?",
+          "expected_any": [
+            [
+              "forty eight",
+              "48"
+            ]
+          ]
+        },
+        {
+          "case_id": "plan-recall",
+          "text": "Remind me of our updated guest count, total budget, food restriction and allergy.",
+          "expected_any": [
+            [
+              "seven",
+              "7"
+            ],
+            [
+              "ninety",
+              "90"
+            ],
+            [
+              "vegan"
+            ],
+            [
+              "peanut"
+            ]
+          ]
+        },
+        {
+          "case_id": "plan-rain",
+          "text": "If it rains, we can use my living room. Briefly confirm the backup location.",
+          "expected_any": [
+            [
+              "living room"
+            ]
+          ]
+        },
+        {
+          "case_id": "plan-summary",
+          "text": "Summarize the final plan, including the current headcount, budget, food restrictions and backup location.",
+          "expected_any": [
+            [
+              "seven",
+              "7"
+            ],
+            [
+              "ninety",
+              "90"
+            ],
+            [
+              "vegan"
+            ],
+            [
+              "peanut"
+            ],
+            [
+              "living room"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "session_id": "connected-story",
+      "turns": [
+        {
+          "case_id": "story-input",
+          "text": "Yesterday Emma and I travelled to Oxford for an interview. Our train was cancelled, but we had not bought any tickets. The interview was at ten, not nine. We arrived at nine forty five. Please summarize the story briefly.",
+          "expected_any": [
+            [
+              "oxford"
+            ],
+            [
+              "cancelled",
+              "canceled"
+            ],
+            [
+              "ten",
+              "10"
+            ]
+          ],
+          "semantic": {
+            "tickets_not_bought": [
+              "not bought",
+              "hadn t bought",
+              "no tickets",
+              "without tickets",
+              "had not purchased",
+              "hadn t purchased",
+              "not purchased"
+            ]
+          },
+          "snr_db": 20
+        },
+        {
+          "case_id": "story-negation",
+          "text": "Had we already bought our train tickets?",
+          "expected_any": [
+            [
+              "no",
+              "not",
+              "hadn t"
+            ]
+          ]
+        },
+        {
+          "case_id": "story-time",
+          "text": "What time was the interview scheduled for?",
+          "expected_any": [
+            [
+              "ten",
+              "10"
+            ]
+          ]
+        },
+        {
+          "case_id": "story-city",
+          "text": "Which city did we visit, and who travelled with me?",
+          "expected_any": [
+            [
+              "oxford"
+            ],
+            [
+              "emma"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "session_id": "english-teaching",
+      "turns": [
+        {
+          "case_id": "teaching-difference",
+          "text": "Explain the difference between affect and effect in two short sentences.",
+          "expected_any": [
+            [
+              "clarify",
+              "spell",
+              "which meaning",
+              "did you mean"
+            ]
+          ]
+        },
+        {
+          "case_id": "teaching-clarification",
+          "text": "I mean affect as a verb meaning influence, and effect as a noun meaning result. Explain the difference briefly.",
+          "expected_any": [
+            [
+              "affect"
+            ],
+            [
+              "effect"
+            ],
+            [
+              "influence",
+              "influences",
+              "change"
+            ],
+            [
+              "result",
+              "outcome"
+            ]
+          ]
+        },
+        {
+          "case_id": "teaching-examples",
+          "text": "Give me one short example sentence for each of those two words.",
+          "expected_any": [
+            [
+              "affect"
+            ],
+            [
+              "effect"
+            ]
+          ]
+        },
+        {
+          "case_id": "teaching-repeat",
+          "text": "Please say exactly: The blue train leaves at nine forty five.",
+          "expected_any": [
+            [
+              "blue train"
+            ],
+            [
+              "nine forty five",
+              "9 45",
+              "945"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "session_id": "interruption-and-recovery",
+      "turns": [
+        {
+          "case_id": "reply-to-interrupt",
+          "text": "Tell me an exciting story about a cat exploring a space station.",
+          "expected_any": [],
+          "leave_playing": true
+        },
+        {
+          "case_id": "voice-interruption",
+          "text": "Stop that story. What is seven plus five?",
+          "expected_any": [
+            [
+              "twelve",
+              "12"
+            ]
+          ],
+          "barge_in": true
+        },
+        {
+          "case_id": "after-interruption",
+          "text": "What is nine minus four?",
+          "expected_any": [
+            [
+              "five",
+              "5"
+            ]
+          ]
+        },
+        {
+          "case_id": "cloud-timeout",
+          "text": "What is two plus two?",
+          "expected_any": [],
+          "fault": "cloud_timeout",
+          "expected_error": true
+        },
+        {
+          "case_id": "after-cloud-timeout",
+          "text": "What is three plus three?",
+          "expected_any": [
+            [
+              "six",
+              "6"
+            ]
+          ]
+        },
+        {
+          "case_id": "silent-input",
+          "text": "",
+          "expected_any": [],
+          "silence_seconds": 5,
+          "expect_silence": true
+        }
+      ]
+    }
+  ],
+  "additional_checks": [
+    "single-session rejection",
+    "invalid origin rejection",
+    "malformed control recovery",
+    "non-finite/wrong-sized microphone frame handling",
+    "bounded microphone burst delivery"
+  ],
+  "scope": "Connected conversations, not independent prompts. Freeze before live evaluation; deterministic anchors are necessary checks, not comprehensive semantic or safety judgments.",
+  "changes_from_v1": "Development regression revision: preserve original v1 results; ambiguous same-spelling teaching input should elicit clarification, then user supplies explicit meanings. Existing audio reused by hash, one new turn. Not an untouched benchmark."
+}

@@ -1,0 +1,110 @@
+{
+  "selected": 8,
+  "completed": 8,
+  "failed": 0,
+  "model_load_seconds": 1.3621869159997004,
+  "device": "cpu",
+  "human": {
+    "reference_words": 199,
+    "reference_characters": 1116,
+    "word_errors": 9,
+    "character_errors": 25,
+    "substitutions": 5,
+    "deletions": 4,
+    "insertions": 0,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 8,
+    "wer": 0.04522613065326633,
+    "cer": 0.022401433691756272,
+    "exact_rate": 0.25
+  },
+  "development_human": {
+    "reference_words": 0,
+    "reference_characters": 0,
+    "word_errors": 0,
+    "character_errors": 0,
+    "substitutions": 0,
+    "deletions": 0,
+    "insertions": 0,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 0,
+    "wer": 0.0,
+    "cer": 0.0,
+    "exact_rate": 0.0
+  },
+  "validation_human": {
+    "reference_words": 199,
+    "reference_characters": 1116,
+    "word_errors": 9,
+    "character_errors": 25,
+    "substitutions": 5,
+    "deletions": 4,
+    "insertions": 0,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 8,
+    "wer": 0.04522613065326633,
+    "cer": 0.022401433691756272,
+    "exact_rate": 0.25
+  },
+  "stress": {
+    "reference_words": 0,
+    "reference_characters": 0,
+    "word_errors": 0,
+    "character_errors": 0,
+    "substitutions": 0,
+    "deletions": 0,
+    "insertions": 0,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 0,
+    "wer": 0.0,
+    "cer": 0.0,
+    "exact_rate": 0.0
+  },
+  "nonspeech": {
+    "reference_words": 0,
+    "reference_characters": 0,
+    "word_errors": 0,
+    "character_errors": 0,
+    "substitutions": 0,
+    "deletions": 0,
+    "insertions": 0,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 0,
+    "wer": 0.0,
+    "cer": 0.0,
+    "exact_rate": 0.0
+  },
+  "median_decode_seconds": 2.668465250999816,
+  "median_rtf": 0.2416036932648536,
+  "resources": {
+    "samples": 47,
+    "metrics": {
+      "rss_mib": {
+        "mean": 679.9359208776596,
+        "peak": 801.75390625
+      },
+      "cpu_percent_one_core": {
+        "mean": 220.1212765957447,
+        "peak": 392.4
+      },
+      "cpu_percent_machine": {
+        "mean": 18.343439716312055,
+        "peak": 32.699999999999996
+      },
+      "system_ram_used_mib": {
+        "mean": 1930.260970744681,
+        "peak": 2089.3515625
+      },
+      "gpu_vram_mib": {
+        "mean": 26.0,
+        "peak": 26.0
+      },
+      "gpu_util_percent": {
+        "mean": 0.0,
+        "peak": 0.0
+      }
+    },
+    "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
+  },
+  "scope": "Offline whole-recording final decode, not real-time endpoint/preview/cloud/TTS latency. Nonspeech probes bypass VAD and are not automatically live user turns. Stress variants are not independent recordings. WER/CER use lowercase NFKC and punctuation-to-space normalization with literal number spellings."
+}

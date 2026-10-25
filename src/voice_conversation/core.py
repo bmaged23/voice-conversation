@@ -1,4 +1,5 @@
 """Small independently testable pieces of the realtime pipeline."""
+
 import re
 from collections import deque
 
@@ -14,7 +15,7 @@ class PhraseBuffer:
         self.text += text
         phrases = []
         while self.text:
-            match = re.search(r"[.!?;:,](?:\s|$)", self.text[self.minimum - 1:])
+            match = re.search(r"[.!?;:,](?:\s|$)", self.text[self.minimum - 1 :])
             end = self.minimum + match.end() - 1 if match else 0
             if not end and len(self.text) >= self.maximum:
                 end = self.text.rfind(" ", 0, self.maximum + 1)
@@ -34,6 +35,7 @@ class PhraseBuffer:
 
 class Endpoint:
     """Accumulate 512-sample frames using externally supplied VAD scores."""
+
     def __init__(self, settings):
         self.settings = settings
         self.frame_ms = 32
@@ -64,8 +66,10 @@ class Endpoint:
         if not self.started and self.speech_ms >= self.settings["min_speech_ms"]:
             self.started = True
             events.append(("start", None))
-        if (self.silence_ms >= self.settings["end_of_turn_silence_ms"] or
-                len(self.frames) * 32 >= self.settings["max_utterance_seconds"] * 1000):
+        if (
+            self.silence_ms >= self.settings["end_of_turn_silence_ms"]
+            or len(self.frames) * 32 >= self.settings["max_utterance_seconds"] * 1000
+        ):
             if self.started:
                 events.append(("end", np.concatenate(self.frames)))
             self.reset()
@@ -73,4 +77,8 @@ class Endpoint:
 
     def snapshot(self, seconds):
         count = max(1, int(seconds * 1000 / 32))
-        return np.concatenate(self.frames[-count:]) if self.frames else np.zeros(0, np.float32)
+        return (
+            np.concatenate(self.frames[-count:])
+            if self.frames
+            else np.zeros(0, np.float32)
+        )

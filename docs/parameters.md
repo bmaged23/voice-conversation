@@ -1,10 +1,14 @@
 # Configuration reference
 
-Generated from `config.py`. Restart the server after editing it. Credentials remain in `.env`.
+Generated from `config.py`. Restart the application after editing.
+
+Credentials are loaded from `.env`; no credential values appear here.
 
 ## language
 
-`en`
+| Parameter | Default |
+| --- | --- |
+| `language` | `en` |
 
 ## audio
 
@@ -47,7 +51,7 @@ Generated from `config.py`. Restart the server after editing it. Credentials rem
 | `mode` | `rolling_window` |
 | `partial_interval_ms` | `600` |
 | `window_seconds` | `10` |
-| `beam_size` | `1` |
+| `beam_size` | `3` |
 | `language` | `en` |
 | `cpu_threads` | `2` |
 
@@ -60,11 +64,13 @@ Generated from `config.py`. Restart the server after editing it. Credentials rem
 | `api_key_env` | `OLLAMA_API_KEY` |
 | `model_env` | `OLLAMA_MODEL` |
 | `stream` | `True` |
-| `temperature` | `0.6` |
+| `temperature` | `0.2` |
 | `max_response_tokens` | `192` |
 | `history_max_turns` | `12` |
 | `request_timeout_seconds` | `60` |
-| `system_prompt` | `You are a warm, enthusiastic English voice companion. Speak naturally and build on what the user has already told you. Keep each reply between 25 and 45 words, with two or three complete spoken sentences. Give one practical answer, never a long menu of options. Use plain spoken prose only: no markdown, lists, bullets, headings or asterisks. Remember constraints and maintain consistency. Express excitement through lively wording without repeating praise. Never claim to have performed actions without tools that confirm them.` |
+| `first_content_timeout_seconds` | `15` |
+| `idle_content_timeout_seconds` | `15` |
+| `system_prompt` | `You are a friendly English voice companion. Answer the latest request directly. Use plain spoken prose without markdown or lists. Usually use one to three short sentences, but include all requested facts even when that takes longer. In summaries preserve people, places, times, numbers, causes and negations; do not replace an event with a different event. A follow-up question does not change earlier facts. Recognize questions from wording even without punctuation. The input comes from speech recognition and may contain homophones. Spelling in the transcript is not authoritative. When the user supplies a definition, use that definition to identify the intended word and explain any likely transcription error. If a requested word comparison repeats the same spelling, explain that the transcription may be ambiguous and ask which spellings the user means; you may suggest a likely intended pair, clearly as a question. Keep corrections and constraints consistent across turns. Follow exact-repeat requests exactly. Never claim to perform actions without confirming tools.` |
 | `think` | `False` |
 
 ## tts
@@ -73,7 +79,14 @@ Generated from `config.py`. Restart the server after editing it. Credentials rem
 | --- | --- |
 | `provider` | `kokoro_onnx` |
 | `model` | `hexgrad/Kokoro-82M` |
-| `device` | `cpu` |
+| `device` | `cuda` |
+| `runtime_python` | `.venv-tts-gpu/bin/python` |
+| `startup_timeout_seconds` | `180` |
+| `request_timeout_seconds` | `30` |
+| `cuda.gpu_mem_limit` | `805306368` |
+| `cuda.arena_extend_strategy` | `kSameAsRequested` |
+| `cuda.cudnn_conv_algo_search` | `HEURISTIC` |
+| `cuda.do_copy_in_default_stream` | `True` |
 | `language_code` | `en-us` |
 | `voice` | `af_heart` |
 | `speed` | `1.05` |
@@ -113,6 +126,8 @@ Generated from `config.py`. Restart the server after editing it. Credentials rem
 | `level` | `INFO` |
 | `record_audio` | `False` |
 | `log_transcripts` | `False` |
+| `pipeline_trace.enabled` | `False` |
+| `pipeline_trace.directory` | `.evaluation-local/pipeline-traces` |
 
 ## server
 
@@ -136,11 +151,11 @@ Generated from `config.py`. Restart the server after editing it. Credentials rem
 
 ## Effective behavior
 
-- With barge-in enabled, the effective speech-start threshold is the greater of the VAD and interruption minimums: 256 ms by default.
-- Frames are 32 ms long. The 700 ms silence threshold is reached after approximately 704 ms; the 300 ms prefix buffer retains 288 ms.
-- The 350 ms phrase timer flushes at a safe word boundary after the minimum phrase length. It is not an end-to-end response deadline.
-- Rolling previews cover the latest ten seconds; final STT decodes the complete utterance, capped at 30 seconds by default.
-- Only completed assistant playback phrases enter history; a partly played phrase is omitted after interruption.
-- One web worker and one session are supported. Increasing speech-process counts loads more model copies and does not automatically reduce latency.
-- CPU-only TTS is implemented. Recording/logging, alternative provider adapters, and semantic turn detection are not implemented merely by changing labels.
-- Default browser playback volume is 100%; the UI slider changes it for the current page. Browser microphone selection applies next session.
+- One web worker and one session; GPU TTS requires one dedicated worker.
+- 512 samples at 16 kHz means 32 ms per microphone frame.
+- Speech start uses the greater of the VAD and interruption minimums.
+- Only completed playback phrases enter assistant history.
+- Whisper previews are rolling-window decoding, not a native streaming decoder.
+- CPU TTS is available by setting `tts.device` to `cpu`.
+- Trace capture is opt-in; normal sessions do not record content.
+- More workers load more model copies and do not guarantee lower latency.

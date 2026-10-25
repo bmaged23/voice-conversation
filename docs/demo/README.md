@@ -12,7 +12,7 @@ live; no WebSocket responses or transcripts are mocked.
 
 The final MP4 contains the user input and assistant playback audio, with the
 actual browser screen recording. The digital soundtrack uses the audio buffers actually played in the browser and their start/stop timestamps, including the interruption cut. The reproduction helper is
-`scripts/record_demo.py`. It requires Playwright Chromium, FFmpeg and FFprobe,
+`scripts/demo/record_conversation_demo.py`. It requires Playwright Chromium, FFmpeg and FFprobe,
 local speech models, a running server, and a valid Ollama API key. It makes a
 small number of paid/quota-consuming cloud requests.
 

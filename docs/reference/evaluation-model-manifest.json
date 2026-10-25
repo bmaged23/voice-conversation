@@ -1,0 +1,7 @@
+{
+  "repository": "Systran/faster-whisper-large-v3",
+  "revision": "edaa852ec7e145841d8ffdb056a99866b5f0a478",
+  "purpose": "Independent recognition of generated TTS output; not the deployed English STT",
+  "license": "MIT (model conversion repository)",
+  "excluded_from_production_image": true
+}

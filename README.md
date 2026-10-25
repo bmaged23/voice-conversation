@@ -20,7 +20,7 @@ The video player and interactive diagram are hosted with GitHub Pages. You can a
 2. **Detect:** Silero VAD on the CPU distinguishes speech from silence. The initial end-of-turn threshold is 700 ms of silence; a turn is capped at 30 seconds.
 3. **Transcribe:** a GPU faster-whisper worker produces rolling previews, then decodes the full turn. Previews stay local; only finalized transcripts go to the LLM.
 4. **Converse:** Nemotron 3 Nano 30B runs on Ollama Cloud with streaming enabled, thinking disabled, bounded history and short English responses.
-5. **Speak:** streamed text is buffered into short phrases. A separate CPU Kokoro worker synthesizes them while earlier audio plays in the browser. Bounded queues prevent unlimited buffering.
+5. **Speak:** streamed text is buffered into short phrases. An isolated GPU Kokoro worker synthesizes them while earlier audio plays in the browser. Bounded queues prevent unlimited buffering; CPU synthesis remains configurable.
 6. **Interrupt:** confirmed new speech cancels the response, clears queued audio and stops playback. A short inference already running may finish internally, but its stale output is ignored. History retains only fully played assistant phrases.
 
 This is a modular STT → LLM → TTS pipeline. Whisper uses rolling windows rather than a native streaming decoder; Kokoro streams at phrase boundaries rather than generating partial waveforms inside each phrase.
@@ -31,8 +31,26 @@ This is a modular STT → LLM → TTS pipeline. Whisper uses rolling windows rat
 - Browser microphone selection, mute, assistant volume and conversation reset.
 - Separate spawned speech processes with models kept loaded and warmed before the server becomes ready.
 - One configuration file: [`config.py`](config.py). Private credentials stay in `.env`.
-- Exact installed package snapshot in [`requirements.txt`](requirements.txt), plus [`uv.lock`](uv.lock).
+- Exact main environment snapshot in [`requirements.txt`](requirements.txt) and an isolated [GPU voice environment](requirements/tts-gpu.txt).
 - Offline tests, actual speech smoke tests, browser checks and a reproducible demo recorder.
+
+## Evaluation and API
+
+The [evaluation report](docs/evaluation/README.md) records frozen cases, baseline failures,
+CPU/GPU comparisons and limitations. Kokoro's paired 32-phrase generation benchmark
+improved from **2.093 s on CPU to 0.418 s on GPU**; this is synthesis timing, not a
+fivefold whole-conversation speedup. Independent recognition returned identical
+transcripts for every paired CPU/GPU output. The original 40-recording STT baseline
+scored **6.60% WER / 2.80% CER** with beam 1; the current beam-3 configuration is
+being requalified.
+
+The FastAPI backend provides readiness/configuration/diagnostic HTTP endpoints and
+`WS /ws` for streaming microphone input, recognized text, cloud replies, speech and
+playback acknowledgements. See the [API README](docs/api/README.md) for endpoints,
+audio formats and the single-session local scope.
+
+GitHub [offline CI](.github/workflows/tests.yml) runs the pinned installation and unit
+tests on pushes and pull requests. The [GPU release workflow](docs/deployment/README.md) builds and qualifies a container before publication. Its first remote run is pending; offline CI alone does not run the speech/cloud models.
 
 ## Requirements
 
@@ -73,12 +91,15 @@ python -m pip check
 
 `requirements.txt` pins all installed distributions, including transitive dependencies, CUDA libraries, testing and browser-recording tools. Its final `-e .` installs this checkout as an editable package; it contains no machine-specific source path.
 
-Alternatively, with [uv](https://docs.astral.sh/uv/):
+Create the isolated CUDA voice environment too. The two environments use different ONNX/CUDA dependencies to keep VAD/STT and GPU TTS compatible:
 
 ```bash
-uv sync --frozen --python 3.12
-source .venv/bin/activate
+python3.12 -m venv .venv-tts-gpu
+.venv-tts-gpu/bin/python -m pip install --upgrade pip
+.venv-tts-gpu/bin/python -m pip install --no-deps -r requirements/tts-gpu.txt
 ```
+
+The GPU voice environment intentionally replaces the CPU ONNX distribution required by Kokoro metadata. Do not install both ONNX distributions into it. CUDA runtime libraries are also supplied by the main environment; keep both environments beside this checkout. The archived `requirements/archive/uv-original.lock` does not describe this two-environment setup; use the pinned files above.
 
 ### 3. Configure Ollama Cloud
 
@@ -100,7 +121,7 @@ Create a key at [Ollama](https://ollama.com/settings/keys). Select a model avail
 ### 4. Download the speech models
 
 ```bash
-HF_HOME="$PWD/.cache/huggingface" python scripts/download_assets.py
+HF_HOME="$PWD/.cache/huggingface" python -m scripts.setup.download_speech_models
 ```
 
 This downloads:
@@ -116,9 +137,9 @@ The downloader uses the checked-in [model manifest](docs/assets/model-manifest.j
 ### 5. Check configuration, GPU and speech
 
 ```bash
-python scripts/check_config.py
+python -m scripts.validation.validate_configuration
 nvidia-smi
-python scripts/serve.py scripts/smoke_speech.py
+python -m scripts.application.start_voice_app -m scripts.validation.validate_speech_models
 ```
 
 The speech check synthesizes a sample sentence, runs Silero detection and transcribes it with the configured GPU STT model. It writes a synthetic WAV and report under ignored `logs/`. The launch helper adds the environment's NVIDIA library directories for CTranslate2.
@@ -126,7 +147,7 @@ The speech check synthesizes a sample sentence, runs Silero detection and transc
 To test cloud authentication with a short request:
 
 ```bash
-python scripts/test_ollama.py
+python -m scripts.validation.validate_cloud_connection
 ```
 
 This sends real requests and consumes a small amount of cloud allowance.
@@ -134,7 +155,7 @@ This sends real requests and consumes a small amount of cloud allowance.
 ### 6. Start Voca
 
 ```bash
-python scripts/serve.py
+python -m scripts.application.start_voice_app
 ```
 
 Open **http://localhost:8765**, click **Start conversation**, and allow microphone access. Use headphones initially. Say “Can you help me plan my day?”, pause for a reply, then speak during the reply to test interruption.
@@ -173,9 +194,9 @@ CPU-only **Linux** experimentation can use the same requirements and set `CONFIG
 
 ```bash
 python -m pytest -q
-python scripts/serve.py scripts/smoke_speech.py
+python -m scripts.application.start_voice_app -m scripts.validation.validate_speech_models
 # With the voice server running; sends one real cloud request:
-python scripts/smoke_session.py
+python -m scripts.validation.validate_voice_session
 ```
 
 The offline tests cover phrase buffering, VAD endpointing, queue backpressure/order, interruption cancellation and Kokoro ONNX input compatibility. The synthetic session test exercises real STT, cloud streaming and TTS, but simulates browser playback acknowledgments.
@@ -184,7 +205,7 @@ Optional browser checks:
 
 ```bash
 python -m playwright install chromium
-python scripts/smoke_ui.py
+python -m scripts.validation.validate_browser_interface
 ```
 
 Browser checks use synthetic events and do not call the LLM. Physical microphone quality, acoustic echo and perceived conversation latency still need testing on your device. Timing examples are smoke-test observations, not a general latency or accuracy benchmark.
@@ -237,8 +258,8 @@ To reproduce the real conversation recording:
 ```bash
 # Install system ffmpeg/ffprobe and Playwright Chromium first.
 # Keep the voice server running in another terminal.
-python scripts/record_demo.py
-python scripts/render_architecture.py
+python -m scripts.demo.record_conversation_demo
+python -m scripts.documentation.render_pipeline_animation
 ```
 
 The recording helper generates a synthetic user voice, drives the actual browser microphone pipeline, records the screen and reconstructs the digital audio mix from actual playback buffers and start/stop timestamps, and writes an H.264/AAC MP4 plus a VP9/Opus WebM fallback and machine-generated captions. It makes ten live cloud requests. It does not publish anything.
@@ -246,7 +267,7 @@ The recording helper generates a synthetic user voice, drives the actual browser
 To refresh exact requirements after deliberately changing the environment:
 
 ```bash
-python scripts/export_requirements.py
+python -m scripts.dependencies.export_installed_versions
 ```
 
 ## Troubleshooting
@@ -254,8 +275,8 @@ python scripts/export_requirements.py
 | Problem | Action |
 | --- | --- |
 | Python version conflict | Create `.venv` with Python 3.12. Do not reuse a Python 3.14 environment. |
-| Missing model files | Run `scripts/download_assets.py` before starting the server. |
-| CUDA/cuDNN library error | Check `nvidia-smi`, use `scripts/serve.py`, and verify your NVIDIA driver supports the installed CUDA 12 libraries. |
+| Missing model files | Run `scripts/setup/download_speech_models.py` before starting the server. |
+| CUDA/cuDNN library error | Check `nvidia-smi`, use `scripts/application/start_voice_app.py`, and verify your NVIDIA driver supports the installed CUDA 12 libraries. |
 | No microphone permission | Use localhost, allow microphone access, and check the device in audio settings. |
 | Assistant interrupts itself | Use headphones; browser echo cancellation depends on your device. |
 | Replies start too early | Increase `vad.end_of_turn_silence_ms`. |

@@ -1,0 +1,71 @@
+# Voca evaluation — 25 October 2026
+
+These measurements belong to Voca, on a GTX 1660 Ti with 6 GiB VRAM.
+They are development evidence, not a completed container release qualification.
+Cloud LLM hardware is outside local resource measurements.
+
+| Component / comparison | Cases | Result |
+| --- | ---: | --- |
+| Whisper small.en CUDA baseline, beam 1 | 40 human recordings | WER **6.60%**, CER **2.80%** |
+| Same decoder, noisy/quiet variants | 18 | WER **16.67%**, CER **7.27%** |
+| Paired CPU / GPU decoder timing | 8 recordings | Median **2.668 / 0.455 s**, approximately **5.86×** decoder speedup |
+| Kokoro CPU / GPU generation | 32 identical phrases | Median **2.093 / 0.418 s**, approximately **5.01×** generation speedup |
+| Independent Whisper large-v3 audit of Kokoro output | 32 CPU + 32 GPU files | Both WER **8.52%**, CER **7.10%**; every paired recognition transcript identical |
+| Original CPU-TTS browser journeys | 20 turns | **16/20** checks passed; failures retained |
+| GPU interruption and recovery regression | 6 turns | **6/6** passed |
+| Full GPU browser journeys | 20 turns | **17/20** checks passed, zero JavaScript errors |
+| Offline unit/regression tests | 10 | **10/10** passed |
+
+Aggregate machine-readable evidence is in [measurements](measurements/).
+Frozen references and case definitions are under [`evaluation/datasets`](../../evaluation/datasets).
+Raw waveform inputs, per-stage outputs and private traces remain local and ignored.
+
+## References and scoring
+
+Human speech is a preselected, gender-balanced 40-sentence subset of the official
+[Google FLEURS English US test split](https://huggingface.co/datasets/google/fleurs),
+CC-BY-4.0, revision `70bb2e84b976b7e960aa89f1c648e09c59f894dd`.
+The manifest records IDs, source text and audio hashes. Selection preceded inference.
+Twenty sentences are development cases, twenty are validation cases. Noise variants
+reuse development recordings and are not independent examples.
+
+WER/CER aggregate edit counts over normalized references, rather than averaging
+per-sentence percentages. Normalization lowercases NFKC text and replaces punctuation
+with spaces; number spellings remain literal. CER includes spaces. Six raw decoder
+non-speech probes produced four hallucinated words; they bypass VAD and do not prove
+four live false turns. The real-browser silence checks passed.
+
+TTS has fixed original text, saved waveform hashes, signal checks, generation timing
+and independent known-English Whisper large-v3 recognition. This measures agreement,
+not human MOS or perceptual quality. Numeric formatting contributes to errors, but
+there are also lexical disagreements and a currency phrase requiring further review.
+CPU/GPU runtime versions differ: these are deployment-configuration comparisons,
+not an isolated hardware-only experiment. Neither speedup is a whole-conversation
+speedup. Model loading is separate from warm generation/decode timings.
+
+## Conversation checks and fixes
+
+The connected journeys cover planning facts and corrections, story recall, teaching,
+exact speech, interruption, arithmetic, injected cloud failure, recovery and silence.
+They use frozen synthetic user recordings, real recognition, cloud streaming and
+synthesis, with playback acknowledgements in Chromium. Keyword checks are necessary
+regressions, not a comprehensive semantic judge.
+
+The baseline exposed a factual follow-up failure, the acoustically ambiguous
+“affect/effect” request and its subsequent examples, and an error banner that persisted
+after successful recovery. Failed outputs are preserved. The prompt now emphasizes
+question intent and factual consistency; the banner clears on the next turn.
+First-content and idle-content deadlines bound empty cloud keepalives.
+
+Beam 3 reduced development word errors from 42 to 39 out of 552 reference words and
+restored question punctuation in one captured follow-up. It did not disambiguate
+“affect/effect”. The default is now beam 3; the 40-case baseline table above remains
+explicitly beam 1 and must not be presented as the new default's final score.
+
+A GPU recovery run exposed a harness race: old-turn audio could satisfy the new
+turn's completion predicate. The corrected predicate requires a final transcript
+and current-turn reply. The earlier failed run is retained locally, not counted as
+a model regression or silently overwritten. The corrected six-case suite passed.
+
+The complete GPU browser rerun passed 17/20 checks. The remaining failures are the story summary (omitted names/place and changed cancellation into missing a train) and the ambiguous teaching request plus its follow-up. Recovery and silence passed. A documentation rendering job briefly overlapped this functional run; its latency observations are not a dedicated isolated performance qualification. Docker image qualification and release
+CI remain pending; this report does not claim that they have passed.

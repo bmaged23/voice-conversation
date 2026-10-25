@@ -9,7 +9,9 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_config():
-    spec = importlib.util.spec_from_file_location("voice_user_config", ROOT / "config.py")
+    spec = importlib.util.spec_from_file_location(
+        "voice_user_config", ROOT / "config.py"
+    )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return copy.deepcopy(module.CONFIG)
@@ -36,10 +38,18 @@ def load_settings():
         raise ValueError("This local version supports one web worker and one session")
     if config["workers"]["start_method"] != "spawn":
         raise ValueError("GPU workers require the spawn start method")
-    for key in ("stt_processes", "tts_processes", "tts_queue_max_phrases", "playback_queue_max_chunks", "llm_token_queue_size"):
+    for key in (
+        "stt_processes",
+        "tts_processes",
+        "tts_queue_max_phrases",
+        "playback_queue_max_chunks",
+        "llm_token_queue_size",
+    ):
         if not isinstance(config["workers"][key], int) or config["workers"][key] < 1:
             raise ValueError(f"workers.{key} must be a positive integer")
     chunk = config["tts"]["chunking"]
+    if config["tts"]["device"] == "cuda" and config["workers"]["tts_processes"] != 1:
+        raise ValueError("The isolated GPU TTS runtime requires one worker")
     if not 0 < chunk["min_characters"] <= chunk["max_characters"]:
         raise ValueError("Invalid TTS phrase size limits")
     if not 0 < config["vad"]["speech_threshold"] < 1:
@@ -47,7 +57,11 @@ def load_settings():
     for key in ("min_speech_ms", "end_of_turn_silence_ms", "max_utterance_seconds"):
         if config["vad"][key] <= 0:
             raise ValueError(f"vad.{key} must be positive")
-    if config["stt"]["partial_interval_ms"] <= 0 or config["stt"]["window_seconds"] <= 0 or chunk["flush_timeout_ms"] <= 0:
+    if (
+        config["stt"]["partial_interval_ms"] <= 0
+        or config["stt"]["window_seconds"] <= 0
+        or chunk["flush_timeout_ms"] <= 0
+    ):
         raise ValueError("STT intervals and TTS flush timeout must be positive")
     if config["logging"]["record_audio"] or config["logging"]["log_transcripts"]:
         raise ValueError("Live audio/transcript recording is not implemented")

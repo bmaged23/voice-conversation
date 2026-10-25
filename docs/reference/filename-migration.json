@@ -1,0 +1,15 @@
+{
+  "scripts/serve.py": "scripts/application/start_voice_app.py",
+  "scripts/download_assets.py": "scripts/setup/download_speech_models.py",
+  "scripts/export_requirements.py": "scripts/dependencies/export_installed_versions.py",
+  "scripts/test_ollama.py": "scripts/validation/validate_cloud_connection.py",
+  "scripts/check_config.py": "scripts/validation/validate_configuration.py",
+  "scripts/smoke_speech.py": "scripts/validation/validate_speech_models.py",
+  "scripts/smoke_session.py": "scripts/validation/validate_voice_session.py",
+  "scripts/smoke_ui.py": "scripts/validation/validate_browser_interface.py",
+  "scripts/check_docs.py": "scripts/validation/validate_documentation_media.py",
+  "scripts/record_demo.py": "scripts/demo/record_conversation_demo.py",
+  "scripts/caption_demo.py": "scripts/demo/caption_conversation_demo.py",
+  "scripts/render_demo_cover.py": "scripts/demo/render_video_cover.py",
+  "scripts/render_architecture.py": "scripts/documentation/render_pipeline_animation.py"
+}

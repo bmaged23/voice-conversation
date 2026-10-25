@@ -1,0 +1,336 @@
+{
+  "source": {
+    "repository": "google/fleurs",
+    "revision": "70bb2e84b976b7e960aa89f1c648e09c59f894dd",
+    "language": "en_us",
+    "split": "test",
+    "license": "CC-BY-4.0",
+    "examples_per_gender": 20,
+    "validation_per_gender": 10,
+    "source_directory": ".evaluation-local/human-inputs-v1"
+  },
+  "seed": 20261025,
+  "cases": [
+    {
+      "case_id": "fleurs-en-1733",
+      "source_file": "899317378039624755.wav",
+      "reference": "First among its 78 recommendations is that a new diplomatic initiative should be taken before the end of this year to secure Iraq\u2019s borders against hostile interventions and to re-establish diplomatic relations with its neighbors.",
+      "gender": "MALE",
+      "split": "validation",
+      "audio_sha256": "b8f294e30196c2316a02c67e180fa314acc10b8e371da4c970ac50120cb23f88"
+    },
+    {
+      "case_id": "fleurs-en-1955",
+      "source_file": "4060670580459188209.wav",
+      "reference": "MS is a disease that affects the central nervous system, which is made up of the brain, the spinal cord and the optic nerve.",
+      "gender": "MALE",
+      "split": "validation",
+      "audio_sha256": "9bf2550cffb35090856f4bc8d3542998cc454bb61e23466acd32d95fdecaec14"
+    },
+    {
+      "case_id": "fleurs-en-1801",
+      "source_file": "1242235796224521830.wav",
+      "reference": "The parade of buildings that make the Hong Kong skyline has been likened to a glittering bar chart that is made apparent by the presence of the waters of Victoria Harbour.",
+      "gender": "MALE",
+      "split": "validation",
+      "audio_sha256": "5cfb754617014c8aa5831dafacc728bbe5d2a8609ff5b931f128ad68bb5acde0"
+    },
+    {
+      "case_id": "fleurs-en-1711",
+      "source_file": "1043394666292127188.wav",
+      "reference": "These theories look at what it is about certain people that make them want the things that they do and what things in their environment will make them do or not do certain things.",
+      "gender": "MALE",
+      "split": "validation",
+      "audio_sha256": "8c5d2b4634bab071370c4d03aca8134cdc25dc256f7409fe872dc82803d3b4c7"
+    },
+    {
+      "case_id": "fleurs-en-1752",
+      "source_file": "10536763405165824117.wav",
+      "reference": "As a result, two fish species have become extinct, and two others have become endangered, including the humpback chub.",
+      "gender": "MALE",
+      "split": "validation",
+      "audio_sha256": "efd479bbb60aebde59283b7cbb6ba748113d16799427a052c43fa02da5e68f8a"
+    },
+    {
+      "case_id": "fleurs-en-1943",
+      "source_file": "14240553912561192306.wav",
+      "reference": "The lower the tension, the more positive the life force present. Every person has the potential to find absolute peace and contentment.",
+      "gender": "MALE",
+      "split": "validation",
+      "audio_sha256": "3d033f82b9af687fbe53a9a33d1ea38b599d7293f0a5cc54cfe02228c0d9c922"
+    },
+    {
+      "case_id": "fleurs-en-1910",
+      "source_file": "7205372698028731729.wav",
+      "reference": "Parisians have a reputation for being egocentric, rude and arrogant.",
+      "gender": "MALE",
+      "split": "validation",
+      "audio_sha256": "56db74c62c43c44170def90b74e20586491ba292d60bd62eb5c15d1a8f833d32"
+    },
+    {
+      "case_id": "fleurs-en-1875",
+      "source_file": "17551750048021783839.wav",
+      "reference": "A full 20 percent of the water that pours out of the planet's rivers into the oceans comes from the Amazon.",
+      "gender": "MALE",
+      "split": "validation",
+      "audio_sha256": "cb17579b089701369a4f953e5688d3cd43e0d639c61abf115a4e3412f7f8b389"
+    },
+    {
+      "case_id": "fleurs-en-1788",
+      "source_file": "14960809846091330730.wav",
+      "reference": "USA Gymnastics supports the United States Olympic Committee's letter and accepts the absolute need of the Olympic family to promote a safe environment for all of our athletes.",
+      "gender": "MALE",
+      "split": "validation",
+      "audio_sha256": "af8ecfdc4a4bb6666d07834d8ee4cc7d1d960b28980f3c9aa43a7e3d2e7935b2"
+    },
+    {
+      "case_id": "fleurs-en-1718",
+      "source_file": "16249020005264010985.wav",
+      "reference": "There is no universal definition for which manufactured items are antiques. Some tax agencies define goods older than 100 years as antiques.",
+      "gender": "MALE",
+      "split": "validation",
+      "audio_sha256": "69046e73fae80f75f53246e264247620e438e257808a7b2432d243b3ab7855ea"
+    },
+    {
+      "case_id": "fleurs-en-1819",
+      "source_file": "5407053594615190090.wav",
+      "reference": "Ancient China had a unique way of showing different time periods; each stage of China or each family that was in power was a distinctive dynasty.",
+      "gender": "MALE",
+      "split": "development",
+      "audio_sha256": "1e51e41f447de5d4a89598e46847b1e9ca1412e6d1a7e64a654e2056dfc1f412"
+    },
+    {
+      "case_id": "fleurs-en-1879",
+      "source_file": "6306322369645218273.wav",
+      "reference": "One can only wonder what the keyboard will become when something newer comes along.",
+      "gender": "MALE",
+      "split": "development",
+      "audio_sha256": "05e0fa18046a79de9dda88cdcdeb0c8e27814b801970ad192d5a27de6e7b19d0"
+    },
+    {
+      "case_id": "fleurs-en-2007",
+      "source_file": "13295416245066118625.wav",
+      "reference": "The U.S. Corps of Engineers estimated that 6 inches of rainfall could breach the previously damaged levees.",
+      "gender": "MALE",
+      "split": "development",
+      "audio_sha256": "ff6b3fe8199a5d0cd6464c4eabb4f485317cf1a759f2b1edb7256a38ed095174"
+    },
+    {
+      "case_id": "fleurs-en-1724",
+      "source_file": "1774013444539766052.wav",
+      "reference": "Its renown for being an epicenter of luxury began in about 400 A.D. and lasted up until about 1100 A.D.",
+      "gender": "MALE",
+      "split": "development",
+      "audio_sha256": "09c2081e65bfb878c3f3ac0ac2004e8b28eee82fc7fd933449857ebefbc08225"
+    },
+    {
+      "case_id": "fleurs-en-1682",
+      "source_file": "9924305423057523453.wav",
+      "reference": "While no one knows for certain who wrote it, it is known that early in its life, the large parchment document (it measures 29\u00be inches by 24\u00bd inches) was rolled up for storage.",
+      "gender": "MALE",
+      "split": "development",
+      "audio_sha256": "7f8e2186df44065aba3331c5fc2f2af07402be60914d255747665be8075d0cb1"
+    },
+    {
+      "case_id": "fleurs-en-1939",
+      "source_file": "13362021168025680919.wav",
+      "reference": "Also after the Revolution occupations were open to all male applicants allowing the most ambitious and successful to succeed.",
+      "gender": "MALE",
+      "split": "development",
+      "audio_sha256": "69547f11bd520d45a4c0b5c43d4ffde6f45480948670d7cf4cd7610e0f9f42a7"
+    },
+    {
+      "case_id": "fleurs-en-1857",
+      "source_file": "4103166808026076685.wav",
+      "reference": "He added that \"they should not, however, be asked to take on obligations that go beyond their development stage, responsibility and capabilities.\"",
+      "gender": "MALE",
+      "split": "development",
+      "audio_sha256": "b55beb198453da648d2eb51de2aabe245f5742be54aba96b01475ac60d73db64"
+    },
+    {
+      "case_id": "fleurs-en-1878",
+      "source_file": "15790784892019701649.wav",
+      "reference": "The central authority of the church had been in Rome for over a thousand years and this concentration of power and money led many to question whether this tenet was being met.",
+      "gender": "MALE",
+      "split": "development",
+      "audio_sha256": "9b57d14f8e5726acb45b2de3175c4127fa6055d61c8ff0bdcc0dd34bba99b283"
+    },
+    {
+      "case_id": "fleurs-en-1683",
+      "source_file": "16561255522246307224.wav",
+      "reference": "There are still many men and women alive who survived their time here, and many more who had loved ones who were murdered or worked to death there, Jews and non-Jews alike.",
+      "gender": "MALE",
+      "split": "development",
+      "audio_sha256": "eaaf5440f648f291fbfc3a6ae2a70ae64507f9a2b572ca51d76d363bcc3d9121"
+    },
+    {
+      "case_id": "fleurs-en-1716",
+      "source_file": "17637008742317695762.wav",
+      "reference": "Entertainment news website TMZ understands the photographer stopped his vehicle on the other side of Sepulveda Boulevard and attempted to take pictures of the police stop before crossing the road and continuing, prompting the California Highway Patrol police officer conducting the traffic stop to order him back across, twice.",
+      "gender": "MALE",
+      "split": "development",
+      "audio_sha256": "950d4bc4447958bb0edcaefda5a12c713dc1deb56b4cfafa7986588a21161223"
+    },
+    {
+      "case_id": "fleurs-en-1835",
+      "source_file": "1727490782035998315.wav",
+      "reference": "No tsunami warning has been issued, and according to the Jakarta geophysics agency, no tsunami warning will be issued because the quake did not meet the magnitude 6.5 requirement.",
+      "gender": "FEMALE",
+      "split": "validation",
+      "audio_sha256": "7bccd76438dcc3ade1c4855e4019c3e6ba8df87183d776c4602aaefd07b43f45"
+    },
+    {
+      "case_id": "fleurs-en-1721",
+      "source_file": "16851035292487940942.wav",
+      "reference": "After the dam was built in 1963, the seasonal floods that would spread sediment throughout the river were halted.",
+      "gender": "FEMALE",
+      "split": "validation",
+      "audio_sha256": "73c0003aa847d51e7e7dd35ed711f8eafa37cd18b848f87f0dfc799e37324764"
+    },
+    {
+      "case_id": "fleurs-en-1665",
+      "source_file": "3364947814969998944.wav",
+      "reference": "The document, according to the leak, will refer to the borders dispute, which Palestine wants based on the borders before the 1967 Mideast War.",
+      "gender": "FEMALE",
+      "split": "validation",
+      "audio_sha256": "e0d5a14a08db942a49abe3e607f0b27ccf1f618e375e9f17553447a7960af9ce"
+    },
+    {
+      "case_id": "fleurs-en-1999",
+      "source_file": "11596505942268625598.wav",
+      "reference": "Throughout 1960s, Brzezinski worked for John F. Kennedy as his advisor and then the Lyndon B. Johnson administration.",
+      "gender": "FEMALE",
+      "split": "validation",
+      "audio_sha256": "f1e3c56aba23bdf8db9880a17fcadd5d9fbfc6cbc7469488d6a18443ac87e25e"
+    },
+    {
+      "case_id": "fleurs-en-1685",
+      "source_file": "1045619486290403122.wav",
+      "reference": "For example, the most common still image photography format in the world is 35mm, which was the dominant film size at the close of the analog film era.",
+      "gender": "FEMALE",
+      "split": "validation",
+      "audio_sha256": "b32ac05d6df3e023930ff5687e27634e5ca78a44474437e634a794158654a4de"
+    },
+    {
+      "case_id": "fleurs-en-1978",
+      "source_file": "17390731724222522492.wav",
+      "reference": "For the Springboks, it ended a five-match losing streak.",
+      "gender": "FEMALE",
+      "split": "validation",
+      "audio_sha256": "0fbc176941d2a6870c4fd2434b653040c932232b3782ad558f029368f180ad3b"
+    },
+    {
+      "case_id": "fleurs-en-1934",
+      "source_file": "9063124481850378787.wav",
+      "reference": "Usually you always here the sound of tourists and vendors. The story of the sound and light is just like a story book.",
+      "gender": "FEMALE",
+      "split": "validation",
+      "audio_sha256": "53f6ade841c9d77b1425443f97f56b5778ce277dd90aa5d7dd3384b6594155ef"
+    },
+    {
+      "case_id": "fleurs-en-1742",
+      "source_file": "18320871674783850842.wav",
+      "reference": "Hong Kong Island gives the territory of Hong Kong its name and is the place that many tourists regard as the main focus.",
+      "gender": "FEMALE",
+      "split": "validation",
+      "audio_sha256": "8cf279eb0a7ac5d6579b6e0179a9d807f371c66c491bc1cbc60cb8e05bd02a03"
+    },
+    {
+      "case_id": "fleurs-en-1794",
+      "source_file": "7783164194712761839.wav",
+      "reference": "A civilization is a singular culture shared by a significant large group of people who live and work co-operatively, a society.",
+      "gender": "FEMALE",
+      "split": "validation",
+      "audio_sha256": "4880385c2e9ce1a3f3677b6a63cc1a1275306f985db252ff5b60cde60c7f7118"
+    },
+    {
+      "case_id": "fleurs-en-1792",
+      "source_file": "12966312239837756963.wav",
+      "reference": "This is called a chemical's pH. You can make an indicator using red cabbage juice.",
+      "gender": "FEMALE",
+      "split": "validation",
+      "audio_sha256": "9c1ba6f574da1d347fd2661de763f4852ce43b8caf8140f143ca746dc3760a9e"
+    },
+    {
+      "case_id": "fleurs-en-1769",
+      "source_file": "11459777646810052940.wav",
+      "reference": "Built by the Egyptians in the third century BCE, the Great Pyramid is one of many large pyramid structures built to honor dead Pharaoh.",
+      "gender": "FEMALE",
+      "split": "development",
+      "audio_sha256": "8c389f0f3ccd71b95b1b2ebf95d873665294b5fc5ec3f0f3cb34d13b0ff6f51f"
+    },
+    {
+      "case_id": "fleurs-en-1967",
+      "source_file": "17087438879836851456.wav",
+      "reference": "Layton had asked for changes to the conservatives' environmental bill during the meeting with the PM, asking for a \"thorough and complete rewriting\" of the Conservative party's environmental bill.",
+      "gender": "FEMALE",
+      "split": "development",
+      "audio_sha256": "deb027c20353dc6c2f0b8bd096e1258f83cc1856f596cfae024983a10713bb8a"
+    },
+    {
+      "case_id": "fleurs-en-1972",
+      "source_file": "2809748946829114692.wav",
+      "reference": "Many people don't think about them as dinosaurs because they have feathers and can fly.",
+      "gender": "FEMALE",
+      "split": "development",
+      "audio_sha256": "6a3c9ea792b5c07b54c5998cf7f6e7ae848a13431f054da4ca5ca334d8a484a0"
+    },
+    {
+      "case_id": "fleurs-en-1894",
+      "source_file": "4848767269319106744.wav",
+      "reference": "A curry is a dish based on herbs and spices, together with either meat or vegetables.",
+      "gender": "FEMALE",
+      "split": "development",
+      "audio_sha256": "892d79ae90198495ef1e444f284cace6ba38bc45c976da2947350085d18c00e8"
+    },
+    {
+      "case_id": "fleurs-en-1807",
+      "source_file": "4940213511640275250.wav",
+      "reference": "Italian is also the everyday language used by most of those who work in the state while Latin is often used in religious ceremonies.",
+      "gender": "FEMALE",
+      "split": "development",
+      "audio_sha256": "a3566a6ef1b11d1548b47d4129f80c60ca7fc3b67f16436547e4ef2fc5a35c47"
+    },
+    {
+      "case_id": "fleurs-en-1795",
+      "source_file": "5152804099019194563.wav",
+      "reference": "Since 1988, ballot boxes must be transparent so that voters and observers can witness that no envelopes are present at the start of the vote and that no envelopes are added except those of the duly counted and authorized voters.",
+      "gender": "FEMALE",
+      "split": "development",
+      "audio_sha256": "c80d4ab2cf158b75d0b9fc88a1f3ee1a5a34305a3657c4c660e680bce3e86703"
+    },
+    {
+      "case_id": "fleurs-en-1936",
+      "source_file": "5505398583576174352.wav",
+      "reference": "Perry stated that he would \"return to Texas to assess the results of tonight's caucus, determine whether there is a path forward for myself in this race\", but later said that he would remain in the race and compete in the January 21 South Carolina primary.",
+      "gender": "FEMALE",
+      "split": "development",
+      "audio_sha256": "9bb1a85f1bf7455c2e83ba211b4f3c3ea9cdf6e672929c4d929975c07768c794"
+    },
+    {
+      "case_id": "fleurs-en-1960",
+      "source_file": "4498640649175127270.wav",
+      "reference": "He was reportedly aged in his 20s. In a statement, Bieber said \"[w]hile I was not present nor directly involved with this tragic accident, my thoughts and prayers are with the family of the victim.\"",
+      "gender": "FEMALE",
+      "split": "development",
+      "audio_sha256": "d63013ea95a555c4553108dcc2084ffc799bd797936b9b7449f75c9c83050135"
+    },
+    {
+      "case_id": "fleurs-en-1942",
+      "source_file": "8837680402159291933.wav",
+      "reference": "We make our houses from plants and make clothes from plants. Most foods that we eat are plants. Without plants, animals could not survive.",
+      "gender": "FEMALE",
+      "split": "development",
+      "audio_sha256": "22e6b059559f8066d587142592b85afd555c8f8db3773b197bb0c01db1782d68"
+    },
+    {
+      "case_id": "fleurs-en-1893",
+      "source_file": "11536232800365538941.wav",
+      "reference": "The Sundarbans are the largest littoral mangrove belt in the world, stretching 80 km (50 mi) into the Bangladeshi and Indian hinterland from the coast.",
+      "gender": "FEMALE",
+      "split": "development",
+      "audio_sha256": "d08ee182ad247752711fcee9a7b8928d68d32fff3b15d4007b048380fa499742"
+    }
+  ],
+  "scope": "40 balanced read-speech clips, 20 development/20 validation; unique sentence IDs across splits. Selection fixed before model inference. This small public subset is not a general benchmark ranking."
+}

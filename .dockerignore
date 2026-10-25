@@ -1,0 +1,24 @@
+# Allow only reviewed application and test inputs into the build context.
+**
+!requirements.txt
+!pyproject.toml
+!config.py
+!requirements/
+!requirements/**
+!src/
+!src/**
+!scripts/
+!scripts/**
+!web/
+!web/**
+!docs/
+!docs/**
+!evaluation/
+!evaluation/**
+!tests/
+!tests/**
+!deployment/
+!deployment/docker/
+!deployment/docker/Dockerfile
+**/__pycache__/
+**/*.pyc

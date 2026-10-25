@@ -1,0 +1,44 @@
+{
+  "cases": 32,
+  "cpu_median_seconds": 2.0930751190001047,
+  "gpu_median_seconds": 0.41763597399949504,
+  "generation_speedup": 5.011721329836005,
+  "cpu_agreement": {
+    "reference_words": 411,
+    "reference_characters": 2155,
+    "word_errors": 35,
+    "character_errors": 153,
+    "substitutions": 23,
+    "deletions": 9,
+    "insertions": 3,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 32,
+    "wer": 0.0851581508515815,
+    "cer": 0.07099767981438515,
+    "exact_rate": 0.625
+  },
+  "gpu_agreement": {
+    "reference_words": 411,
+    "reference_characters": 2155,
+    "word_errors": 35,
+    "character_errors": 153,
+    "substitutions": 23,
+    "deletions": 9,
+    "insertions": 3,
+    "hallucinated_words_on_empty_reference": 0,
+    "samples": 32,
+    "wer": 0.0851581508515815,
+    "cer": 0.07099767981438515,
+    "exact_rate": 0.625
+  },
+  "all_independent_hypotheses_identical": true,
+  "gate": {
+    "generations_complete": true,
+    "audits_complete": true,
+    "wer_not_worse": true,
+    "cer_not_worse": true,
+    "speedup_at_least_1_2": true
+  },
+  "scope": "Different CPU/GPU ONNX/CUDA deployment runtimes on the same graph/voice/text. Generation speedup is not whole-conversation speedup; independent agreement is not human MOS.",
+  "passed": true
+}

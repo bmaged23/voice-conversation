@@ -5,6 +5,7 @@
 *.pem
 *.key
 .venv/
+.venv-*/
 venv/
 
 # Models and private runtime content
@@ -12,6 +13,16 @@ models/
 .cache/
 logs/
 recordings/
+.evaluation-local/
+description/
+data/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+tmp/
+temp/
+*.log
+*.tmp
 *.part
 
 # Python and tools
@@ -22,6 +33,9 @@ __pycache__/
 htmlcov/
 .mypy_cache/
 .ruff_cache/
+playwright-report/
+test-results/
+blob-report/
 *.egg-info/
 build/
 dist/

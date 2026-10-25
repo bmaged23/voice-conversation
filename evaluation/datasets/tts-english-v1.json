@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "language": "en",
+  "source": "Authored synthetic English TTS diagnostics; frozen before GPU comparison.",
+  "cases": [
+    {
+      "case_id": "greeting",
+      "text": "Hello! I am Voca. What would you like to talk about today?"
+    },
+    {
+      "case_id": "names",
+      "text": "Maya and Oliver are meeting Emma outside the library."
+    },
+    {
+      "case_id": "time-words",
+      "text": "The meeting starts at three thirty, so leave home at three."
+    },
+    {
+      "case_id": "time-digits",
+      "text": "The train departs at 9:45 AM and arrives at 11:20 AM."
+    },
+    {
+      "case_id": "money-words",
+      "text": "We have ninety dollars for seven people, and all the food must be vegan."
+    },
+    {
+      "case_id": "money-digits",
+      "text": "Your total is $42.50, including a five dollar delivery charge."
+    },
+    {
+      "case_id": "date-words",
+      "text": "Our appointment is on Tuesday, October twenty seventh."
+    },
+    {
+      "case_id": "year",
+      "text": "The project started in 2024 and will finish in 2026."
+    },
+    {
+      "case_id": "negation",
+      "text": "Do not delete the backup. Restart the test service, not the production service."
+    },
+    {
+      "case_id": "cancellation",
+      "text": "The train was cancelled, and we had not bought any tickets yet."
+    },
+    {
+      "case_id": "allergy",
+      "text": "One guest has a peanut allergy. Please keep peanuts away from every dish."
+    },
+    {
+      "case_id": "arithmetic",
+      "text": "Seven plus five is twelve. Ninety minus forty two is forty eight."
+    },
+    {
+      "case_id": "directions",
+      "text": "Turn left after the bridge, then take the second street on your right."
+    },
+    {
+      "case_id": "weather",
+      "text": "If it rains, we will move the picnic into the living room."
+    },
+    {
+      "case_id": "question",
+      "text": "Would you prefer a quiet walk, or shall we visit the science museum?"
+    },
+    {
+      "case_id": "quotation",
+      "text": "She said, welcome aboard. Then everyone cheered and the birthday mission began."
+    },
+    {
+      "case_id": "acronyms",
+      "text": "The API uses HTTP, and the model runs on a GPU."
+    },
+    {
+      "case_id": "decimal",
+      "text": "The temperature is 21.5 degrees, and the distance is 3.2 kilometers."
+    },
+    {
+      "case_id": "fraction",
+      "text": "Add half a cup of water and a quarter of a teaspoon of salt."
+    },
+    {
+      "case_id": "email-spelled",
+      "text": "Write hello, followed by the at sign, then example dot com."
+    },
+    {
+      "case_id": "address",
+      "text": "The library is at twenty four Maple Street, next to the post office."
+    },
+    {
+      "case_id": "ordinal",
+      "text": "This is your third attempt, and you finished in second place."
+    },
+    {
+      "case_id": "contractions",
+      "text": "I don't think we'll need another ticket, but I'll check before we leave."
+    },
+    {
+      "case_id": "homographs",
+      "text": "Please record the record number before you present the present to Maya."
+    },
+    {
+      "case_id": "places",
+      "text": "Our journey takes us from Edinburgh to Oxford, and then to Worcester."
+    },
+    {
+      "case_id": "instruction",
+      "text": "First save your work. Next close the application. Finally restart your computer."
+    },
+    {
+      "case_id": "short",
+      "text": "Thank you. See you tomorrow."
+    },
+    {
+      "case_id": "excitement",
+      "text": "The countdown has begun! Seven friends, one surprise, and a whole galaxy to explore."
+    },
+    {
+      "case_id": "calm",
+      "text": "Take a slow breath. We can solve this one small step at a time."
+    },
+    {
+      "case_id": "long-one",
+      "text": "Yesterday we planned a surprise picnic for Maya. We chose vegan food, saved room for seven guests, and kept the entire budget under ninety dollars."
+    },
+    {
+      "case_id": "long-two",
+      "text": "The interview begins at ten, not nine. Emma arrived at nine forty five, although the train was cancelled and neither traveler had purchased a ticket."
+    },
+    {
+      "case_id": "confirmation",
+      "text": "I understand. I will explain the plan, but I have not booked or purchased anything."
+    }
+  ],
+  "adoption_gate": {
+    "maximum_additional_wer_absolute": 0.005,
+    "maximum_additional_cer_absolute": 0.005,
+    "maximum_failed_generations": 0,
+    "minimum_median_speedup": 1.2,
+    "note": "Independent ASR is an agreement proxy. Review every new lexical discrepancy and signal failure; do not claim human MOS."
+  }
+}

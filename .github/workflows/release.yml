@@ -1,0 +1,151 @@
+name: GPU image release
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'web/**'
+      - 'scripts/**'
+      - 'config.py'
+      - 'requirements.txt'
+      - 'requirements/*.txt'
+      - 'pyproject.toml'
+      - 'tests/**'
+      - 'evaluation/**'
+      - 'deployment/**'
+      - 'docs/assets/model-manifest.json'
+      - '.dockerignore'
+      - '!scripts/**/*.md'
+      - '!deployment/**/*.md'
+permissions:
+  contents: read
+concurrency:
+  group: voca-gpu-release
+  cancel-in-progress: false
+jobs:
+  tests:
+    uses: ./.github/workflows/tests.yml
+  build:
+    if: github.repository == 'bmaged23/voice-conversation' && github.actor == 'bmaged23' && github.ref == 'refs/heads/main'
+    needs: tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      candidate: ghcr.io/bmaged23/voice-conversation-candidates@${{ steps.image.outputs.digest }}
+      digest: ${{ steps.image.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free unused hosted SDK space
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        id: image
+        with:
+          context: .
+          file: deployment/docker/Dockerfile
+          platforms: linux/amd64
+          push: true
+          provenance: false
+          tags: ghcr.io/bmaged23/voice-conversation-candidates:sha-${{ github.sha }}
+          build-args: VCS_REF=${{ github.sha }}
+          cache-from: type=gha,scope=voca-gpu
+          cache-to: type=gha,scope=voca-gpu,mode=max
+  qualify:
+    needs: build
+    runs-on: [self-hosted, Linux, X64, voca-gpu]
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: read
+    env:
+      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+      OLLAMA_BASE_URL: https://ollama.com
+      OLLAMA_MODEL: nemotron-3-nano:30b
+      PLAYWRIGHT_BROWSERS_PATH: /mnt/d/voice-bridge-tools/playwright
+      CANDIDATE: ${{ needs.build.outputs.candidate }}
+      PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Attach frozen local evaluation fixtures
+        run: |
+          ln -s /home/bmage/projects/voice-conversation/.venv .venv
+          ln -s /home/bmage/projects/voice-conversation/models models
+          mkdir -p .evaluation-local
+          for name in human-inputs-v1 component-inputs-v1 flow-inputs-v2; do
+            ln -s "/home/bmage/projects/voice-conversation/.evaluation-local/$name" ".evaluation-local/$name"
+          done
+      - name: Pull exact staging candidate
+        run: docker pull "$CANDIDATE"
+      - name: Evaluate candidate GPU models and complete browser flows
+        run: .venv/bin/python -m scripts.release.qualify_gpu_image --image "$CANDIDATE" --source-sha "$GITHUB_SHA"
+      - name: Preserve public aggregate gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: voca-gpu-qualification
+          path: .evaluation-local/image-gate/gate-summary.json
+          if-no-files-found: warn
+          retention-days: 30
+  publish:
+    needs: [build, qualify]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      packages: read
+      contents: read
+    env:
+      CANDIDATE: ${{ needs.build.outputs.candidate }}
+      DIGEST: ${{ needs.build.outputs.digest }}
+      IMAGE: bmaged23/voice-conversation
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y skopeo
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/login-action@v3
+        with:
+          username: bmaged23
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Publish only the GPU-qualified digest
+        run: |
+          skopeo copy --preserve-digests --authfile "$HOME/.docker/config.json" "docker://$CANDIDATE" "docker://$IMAGE:sha-$GITHUB_SHA"
+          skopeo copy --preserve-digests --authfile "$HOME/.docker/config.json" "docker://$CANDIDATE" "docker://$IMAGE:gpu"
+          mkdir -p /tmp/anonymous
+          printf '{"auths":{}}' > /tmp/anonymous/auth.json
+          skopeo inspect --authfile /tmp/anonymous/auth.json --raw "docker://$IMAGE:gpu" > /tmp/public-manifest.json
+          test "sha256:$(sha256sum /tmp/public-manifest.json | cut -d' ' -f1)" = "$DIGEST"
+  verify_public:
+    needs: [build, publish]
+    runs-on: [self-hosted, Linux, X64, voca-gpu]
+    timeout-minutes: 15
+    env:
+      IMAGE: bmaged23/voice-conversation@${{ needs.build.outputs.digest }}
+      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+      OLLAMA_BASE_URL: https://ollama.com
+      OLLAMA_MODEL: nemotron-3-nano:30b
+      PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Anonymous pull of public image
+        run: |
+          mkdir -p "$RUNNER_TEMP/voca-anonymous"
+          docker --config "$RUNNER_TEMP/voca-anonymous" pull "$IMAGE"
+      - name: Verify normal startup from Docker Hub
+        run: python3 -m scripts.release.smoke_public_image --image "$IMAGE"

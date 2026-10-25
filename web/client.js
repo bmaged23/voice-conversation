@@ -129,6 +129,7 @@ async function stopSession(detail = 'Microphone off') {
 function onPacket(packet) {
   switch (packet.type) {
     case 'interrupt':
+      showError();
       if ((playing || responsePending) && assistantMessage) assistantMessage.article.classList.add('interrupted');
       haltPlayback(); turn = packet.turn; userMessage = assistantMessage = null;
       responsePending = false; el('partial').textContent = ''; state('listening');
