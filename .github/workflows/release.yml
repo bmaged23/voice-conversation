@@ -70,7 +70,7 @@ jobs:
     env:
       OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
       OLLAMA_BASE_URL: https://ollama.com
-      OLLAMA_MODEL: nemotron-3-nano:30b
+      OLLAMA_MODEL: gemma4:31b
       PLAYWRIGHT_BROWSERS_PATH: /mnt/d/voice-bridge-tools/playwright
       CANDIDATE: ${{ needs.build.outputs.candidate }}
       PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
@@ -138,6 +138,10 @@ jobs:
           printf '{"auths":{}}' > /tmp/anonymous/auth.json
           skopeo inspect --authfile /tmp/anonymous/auth.json --raw "docker://$IMAGE:gpu" > /tmp/public-manifest.json
           test "sha256:$(sha256sum /tmp/public-manifest.json | cut -d' ' -f1)" = "$DIGEST"
+      - name: Update public image documentation and source links
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: python3 -m scripts.release.update_dockerhub
   verify_public:
     needs: [build, publish]
     runs-on: [self-hosted, Linux, X64, voca-gpu]
@@ -146,7 +150,7 @@ jobs:
       IMAGE: bmaged23/voice-conversation@${{ needs.build.outputs.digest }}
       OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
       OLLAMA_BASE_URL: https://ollama.com
-      OLLAMA_MODEL: nemotron-3-nano:30b
+      OLLAMA_MODEL: gemma4:31b
       PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
     steps:
       - uses: actions/checkout@v4

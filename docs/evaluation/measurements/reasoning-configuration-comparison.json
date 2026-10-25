@@ -1,0 +1,27 @@
+{
+  "dataset_sha256": "acf817c2cdca6a74ea8de8f2d7d781839ebb9f4c1c3320a585d2a1ab48c1b683",
+  "configurations": {
+    "nemotron-3-nano:30b no-thinking": {
+      "cases": 8,
+      "anchor_passed": 7,
+      "execution_errors": 0,
+      "median_first_content_seconds": 0.5702151705008873,
+      "output_tokens_total": 96
+    },
+    "nemotron-3-nano:30b thinking": {
+      "cases": 8,
+      "anchor_passed": 8,
+      "execution_errors": 0,
+      "median_first_content_seconds": 3.5615318459986156,
+      "output_tokens_total": 4108
+    },
+    "gemma4:31b no-thinking": {
+      "cases": 8,
+      "anchor_passed": 8,
+      "execution_errors": 0,
+      "median_first_content_seconds": 0.42040902499866206,
+      "output_tokens_total": 74
+    }
+  },
+  "scope": "One eight-case development run per configuration, manually reviewed answers. Token counts include reasoning tokens where reported; no per-model money-price inference."
+}

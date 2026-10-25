@@ -1,0 +1,23 @@
+{
+  "cases": 64,
+  "true_positive": 58,
+  "false_negative": 0,
+  "false_positive": 0,
+  "true_negative": 6,
+  "clip_recall": 1.0,
+  "clip_precision": 1.0,
+  "clip_specificity": 1.0,
+  "settings": {
+    "provider": "silero",
+    "device": "cpu",
+    "speech_threshold": 0.5,
+    "min_speech_ms": 256,
+    "end_of_turn_silence_ms": 700,
+    "prefix_buffer_ms": 300,
+    "max_utterance_seconds": 30,
+    "intra_op_threads": 1,
+    "inter_op_threads": 1
+  },
+  "input_manifest_sha256": "db46a5e42b37896f516045fe71bb9886ba68842010de49981e5f0369f5299ae8",
+  "scope": "Clip-level speech activation only; no human frame/boundary labels, so no frame accuracy or endpoint latency claim. Six nonspeech probes are small synthetic checks. Derived stress variants are not independent speakers."
+}

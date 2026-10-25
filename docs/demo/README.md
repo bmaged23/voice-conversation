@@ -23,3 +23,5 @@ on-screen transcript can include the remainder of an interrupted generated
 reply, which was not fully spoken; it is marked accordingly.
 
 Recording preserves real elapsed conversation time. Browser playback timestamps place each audio buffer on the screen timeline, preserving silence and truncating interrupted playback at its actual stop time. There is no narration or background music.
+
+This recording predates the GPU container release and used Nemotron. The current cloud default is Gemma 4 31B, selected after separate reasoning regressions; the original recorded dialogue remains unchanged.

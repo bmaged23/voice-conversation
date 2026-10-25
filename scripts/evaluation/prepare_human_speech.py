@@ -73,18 +73,22 @@ def main():
                         break
     if names:
         raise RuntimeError("Missing selected files: " + repr(sorted(names)))
-    (folder / "inputs.json").write_text(
-        json.dumps({"source": cfg, "seed": CONFIG["seed"], "cases": selected}, indent=2)
-        + "\n"
-    )
     public = {
         "source": cfg,
         "seed": CONFIG["seed"],
         "cases": [{k: v for k, v in r.items() if k != "audio"} for r in selected],
         "scope": "40 balanced read-speech clips, 20 development/20 validation; unique sentence IDs across splits. Selection fixed before model inference. This small public subset is not a general benchmark ranking.",
     }
-    (ROOT / "evaluation/datasets/human-english-v1.json").write_text(
-        json.dumps(public, indent=2) + "\n"
+    reference_path = ROOT / "evaluation/datasets/human-english-v1.json"
+    expected = json.loads(reference_path.read_text())
+    for field in ("source", "seed", "cases"):
+        if expected[field] != public[field]:
+            raise ValueError(
+                f"Frozen human reference mismatch in {field}; refusing to rewrite the gold dataset"
+            )
+    (folder / "inputs.json").write_text(
+        json.dumps({"source": cfg, "seed": CONFIG["seed"], "cases": selected}, indent=2)
+        + "\n"
     )
     print("Frozen 40 human recordings and reference transcripts.", flush=True)
 

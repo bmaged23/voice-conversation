@@ -1,12 +1,13 @@
-"""Download local speech assets and record revisions and SHA256 hashes."""
+"""Download production speech assets at reviewed revisions and verify every hash."""
 
+import argparse
 import hashlib
 import json
 from pathlib import Path
-import urllib.request
 import runpy
+import urllib.request
 
-from huggingface_hub import HfApi, snapshot_download
+from huggingface_hub import snapshot_download
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -19,49 +20,54 @@ def sha256(path):
     return result.hexdigest()
 
 
-def fetch(url, target, expected=None):
-    if target.exists() and expected and sha256(target) == expected:
+def fetch(url, target, expected):
+    if target.exists() and sha256(target) == expected:
         return
+    target.parent.mkdir(parents=True, exist_ok=True)
     temporary = target.with_suffix(target.suffix + ".part")
     print(f"Downloading {target.name}", flush=True)
+    request = urllib.request.Request(url, headers={"User-Agent": "Voca-model-setup"})
     with (
-        urllib.request.urlopen(url, timeout=120) as source,
+        urllib.request.urlopen(request, timeout=120) as source,
         temporary.open("wb") as output,
     ):
         while block := source.read(8 * 1024 * 1024):
             output.write(block)
-    if expected and sha256(temporary) != expected:
+    if sha256(temporary) != expected:
         raise ValueError(f"Checksum mismatch: {target.name}")
     temporary.replace(target)
 
 
-def github_json(url):
-    request = urllib.request.Request(
-        url, headers={"User-Agent": "voice-conversation-research"}
-    )
-    with urllib.request.urlopen(request, timeout=60) as response:
-        return json.load(response)
-
-
 def main():
-    config = runpy.run_path(str(ROOT / "config.py"))["CONFIG"]
-    paths = config["paths"]
-    models = ROOT / paths["models"]
-    models.mkdir(parents=True, exist_ok=True)
-    manifest_path = models / "assets.json"
-    reference_path = ROOT / "docs/assets/model-manifest.json"
-    if manifest_path.exists():
-        previous = json.loads(manifest_path.read_text())
-    elif reference_path.exists():
-        previous = json.loads(reference_path.read_text())
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--models",
+        type=Path,
+        help="Fixed production layout; independent of runtime tuning for image caching",
+    )
+    args = parser.parse_args()
+    reference = json.loads((ROOT / "docs/assets/model-manifest.json").read_text())
+    if args.models:
+        models = ROOT / args.models
+        paths = {
+            "stt_model": models / "whisper-small.en",
+            "vad_model": models / "silero_vad.onnx",
+            "tts_model": models / "kokoro-v1.0.onnx",
+            "tts_voices": models / "voices-v1.0.bin",
+        }
     else:
-        previous = {}
-    repo = "Systran/faster-whisper-small.en"
-    revision = previous.get("whisper_revision") or HfApi().model_info(repo).sha
+        config = runpy.run_path(str(ROOT / "config.py"))["CONFIG"]
+        models = ROOT / config["paths"]["models"]
+        paths = {
+            key: ROOT / config["paths"][key]
+            for key in ["stt_model", "vad_model", "tts_model", "tts_voices"]
+        }
+    models.mkdir(parents=True, exist_ok=True)
+    repo = reference["whisper_repo"]
     snapshot_download(
         repo,
-        revision=revision,
-        local_dir=ROOT / paths["stt_model"],
+        revision=reference["whisper_revision"],
+        local_dir=paths["stt_model"],
         allow_patterns=[
             "model.bin",
             "config.json",
@@ -70,46 +76,43 @@ def main():
             "preprocessor_config.json",
         ],
     )
-    silero_sha = (
-        previous.get("silero_revision")
-        or github_json(
-            "https://api.github.com/repos/snakers4/silero-vad/commits/master"
-        )["sha"]
-    )
-    silero_url = f"https://raw.githubusercontent.com/snakers4/silero-vad/{silero_sha}/src/silero_vad/data/silero_vad.onnx"
-    files = previous.get("files", {})
+    files = reference["files"]
     fetch(
-        silero_url,
-        ROOT / paths["vad_model"],
-        files.get("silero_vad.onnx", {}).get("sha256"),
+        f"https://raw.githubusercontent.com/snakers4/silero-vad/{reference['silero_revision']}/src/silero_vad/data/silero_vad.onnx",
+        paths["vad_model"],
+        files["silero_vad.onnx"]["sha256"],
     )
-    release = github_json(
-        "https://api.github.com/repos/thewh1teagle/kokoro-onnx/releases/tags/model-files-v1.1"
-    )
-    for name in ("kokoro-v1.0.onnx", "voices-v1.0.bin"):
-        asset = next(asset for asset in release["assets"] if asset["name"] == name)
-        expected = (asset.get("digest") or "").removeprefix("sha256:") or files.get(
-            name, {}
-        ).get("sha256")
-        destination = (
-            ROOT / paths["tts_model" if name.endswith(".onnx") else "tts_voices"]
+    for name, key in [
+        ("kokoro-v1.0.onnx", "tts_model"),
+        ("voices-v1.0.bin", "tts_voices"),
+    ]:
+        fetch(
+            f"https://github.com/thewh1teagle/kokoro-onnx/releases/download/{reference['kokoro_release']}/{name}",
+            paths[key],
+            files[name]["sha256"],
         )
-        fetch(asset["browser_download_url"], destination, expected)
-    manifest = {
-        "whisper_repo": repo,
-        "whisper_revision": revision,
-        "silero_revision": silero_sha,
-        "kokoro_release": release["tag_name"],
-        "files": {
-            str(p.relative_to(models)): {"bytes": p.stat().st_size, "sha256": sha256(p)}
-            for p in models.rglob("*")
-            if p.is_file() and ".cache" not in p.parts and p.name != "assets.json"
-        },
-    }
-    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+    verified = {}
+    for name, metadata in files.items():
+        if name.startswith("whisper-small.en/"):
+            path = paths["stt_model"] / name.split("/", 1)[1]
+        else:
+            key = {
+                "silero_vad.onnx": "vad_model",
+                "kokoro-v1.0.onnx": "tts_model",
+                "voices-v1.0.bin": "tts_voices",
+            }[name]
+            path = paths[key]
+        digest = sha256(path)
+        if digest != metadata["sha256"]:
+            raise ValueError(f"Checksum mismatch: {name}")
+        verified[str(path.relative_to(models))] = {
+            "bytes": path.stat().st_size,
+            "sha256": digest,
+        }
+    manifest = {**reference, "files": verified}
+    (models / "assets.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(
-        "Speech assets ready; revisions and checksums saved to models/assets.json",
-        flush=True,
+        "Production speech assets verified against the reviewed manifest.", flush=True
     )
 
 

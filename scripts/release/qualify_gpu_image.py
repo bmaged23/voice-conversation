@@ -83,6 +83,32 @@ def main():
     run(
         [
             *base,
+            "-e",
+            "OLLAMA_API_KEY",
+            "-e",
+            "OLLAMA_BASE_URL",
+            "-e",
+            "OLLAMA_MODEL",
+            args.image,
+            "-m",
+            "scripts.evaluation.evaluate_llm",
+            "--output",
+            output + "/llm",
+        ]
+    )
+    run(
+        [
+            *base,
+            args.image,
+            "-m",
+            "scripts.evaluation.evaluate_vad",
+            "--output",
+            output + "/vad",
+        ]
+    )
+    run(
+        [
+            *base,
             args.image,
             "-m",
             "scripts.evaluation.evaluate_stt",
@@ -179,12 +205,21 @@ def main():
             stderr=subprocess.DEVNULL,
         )
     stt = read(folder / "stt/summary.json")
+    llm = read(folder / "llm/summary.json")
+    vad = read(folder / "vad/summary.json")
     tts = read(folder / "tts/generation-summary.json")
     audit = read(folder / "tts/audit/summary.json")
     browser = read(folder / "browser/summary.json")
     failures = {row["case_id"] for row in browser["failed"]}
     accepted = set(policy["browser"]["known_quality_limitations"])
     checks = {
+        "llm_regressions": llm["cases"] == llm["passed"] == policy["llm"]["cases"]
+        and llm["execution_errors"] == 0,
+        "vad_complete": vad["cases"] == policy["vad"]["cases"],
+        "vad_speech_detection": vad["false_negative"]
+        <= policy["vad"]["false_negatives_max"],
+        "vad_nonspeech_activation": vad["false_positive"]
+        <= policy["vad"]["false_positives_max"],
         "stt_complete": stt["completed"] == policy["stt"]["cases"]
         and stt["failed"] == 0,
         "stt_human_wer": stt["human"]["wer"] <= policy["stt"]["human_wer_max"],
@@ -212,6 +247,8 @@ def main():
         "checks": checks,
         "passed": all(checks.values()),
         "stt": stt,
+        "llm": llm,
+        "vad": vad,
         "tts": tts,
         "tts_audit": audit,
         "browser": browser,

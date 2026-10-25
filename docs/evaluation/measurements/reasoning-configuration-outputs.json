@@ -1,0 +1,389 @@
+{
+  "dataset_sha256": "acf817c2cdca6a74ea8de8f2d7d781839ebb9f4c1c3320a585d2a1ab48c1b683",
+  "rows": [
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "updated-budget",
+      "reference_answer": "48 dollars remain.",
+      "first_content_seconds": 0.7525428609988012,
+      "input_tokens": 427,
+      "output_tokens": 8,
+      "answer": "You have $48 left.",
+      "seconds": 0.9021222529991064,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "alternate-budget",
+      "reference_answer": "83 dollars remain.",
+      "first_content_seconds": 0.5953271690013935,
+      "input_tokens": 238,
+      "output_tokens": 18,
+      "answer": "125 minus 24 minus 18 leaves 83 dollars.",
+      "seconds": 0.7514077600026212,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "alternate-expenses",
+      "reference_answer": "44 dollars remain.",
+      "first_content_seconds": 0.5718703700003971,
+      "input_tokens": 233,
+      "output_tokens": 25,
+      "answer": "We started with ninety dollars. After spending nineteen on food and twenty seven on decorations, we have thirty four dollars remaining.",
+      "seconds": 0.762069659998815,
+      "anchor_passed": false
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "multiplication",
+      "reference_answer": "102.",
+      "first_content_seconds": 0.6115590679983143,
+      "input_tokens": 216,
+      "output_tokens": 6,
+      "answer": "One hundred and two.",
+      "seconds": 0.702586463001353,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "division",
+      "reference_answer": "12.",
+      "first_content_seconds": 0.568512470999849,
+      "input_tokens": 220,
+      "output_tokens": 11,
+      "answer": "One hundred forty four divided by twelve is twelve.",
+      "seconds": 0.7047195640006976,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "negative",
+      "reference_answer": "Negative eight.",
+      "first_content_seconds": 0.561399871003232,
+      "input_tokens": 218,
+      "output_tokens": 10,
+      "answer": "Twenty three minus thirty one is negative eight.",
+      "seconds": 0.6627530660007324,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "decimal",
+      "reference_answer": "7.5 liters.",
+      "first_content_seconds": 0.5641691710006853,
+      "input_tokens": 230,
+      "output_tokens": 10,
+      "answer": "Three batches need seven point five liters.",
+      "seconds": 0.662643465999281,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "time",
+      "reference_answer": "9:45.",
+      "first_content_seconds": 0.5685599710013776,
+      "input_tokens": 230,
+      "output_tokens": 8,
+      "answer": "You arrive at nine forty five.",
+      "seconds": 0.6899373650012421,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": true,
+        "temperature": 0,
+        "num_predict": 768
+      },
+      "case_id": "updated-budget",
+      "reference_answer": "48 dollars remain.",
+      "first_content_seconds": 4.517541768000228,
+      "input_tokens": 427,
+      "output_tokens": 693,
+      "answer": "You've spent $24 on food and $18 on decorations, totaling $42. From the $90 budget, $48 remains.",
+      "seconds": 4.724304757000937,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": true,
+        "temperature": 0,
+        "num_predict": 768
+      },
+      "case_id": "alternate-budget",
+      "reference_answer": "83 dollars remain.",
+      "first_content_seconds": 1.812346359998628,
+      "input_tokens": 238,
+      "output_tokens": 405,
+      "answer": "You started with a budget of 125 dollars. After spending 24 on food and 18 on decorations, 83 dollars remain.",
+      "seconds": 1.9249796250005602,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": true,
+        "temperature": 0,
+        "num_predict": 768
+      },
+      "case_id": "alternate-expenses",
+      "reference_answer": "44 dollars remain.",
+      "first_content_seconds": 4.558873670997855,
+      "input_tokens": 233,
+      "output_tokens": 424,
+      "answer": "You started with ninety dollars, spent nineteen on food and twenty seven on decorations, and forty four dollars remain.",
+      "seconds": 5.159636148997379,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": true,
+        "temperature": 0,
+        "num_predict": 768
+      },
+      "case_id": "multiplication",
+      "reference_answer": "102.",
+      "first_content_seconds": 6.5725773080012,
+      "input_tokens": 216,
+      "output_tokens": 527,
+      "answer": "Seventeen times six is one hundred and two.",
+      "seconds": 6.705167601001449,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": true,
+        "temperature": 0,
+        "num_predict": 768
+      },
+      "case_id": "division",
+      "reference_answer": "12.",
+      "first_content_seconds": 3.45052670899895,
+      "input_tokens": 220,
+      "output_tokens": 550,
+      "answer": "One hundred forty-four divided by twelve is twelve.",
+      "seconds": 3.52691820399923,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": true,
+        "temperature": 0,
+        "num_predict": 768
+      },
+      "case_id": "negative",
+      "reference_answer": "Negative eight.",
+      "first_content_seconds": 3.1391310159997374,
+      "input_tokens": 218,
+      "output_tokens": 548,
+      "answer": "Twenty-three minus thirty-one is negative eight.",
+      "seconds": 3.2499281099990185,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": true,
+        "temperature": 0,
+        "num_predict": 768
+      },
+      "case_id": "decimal",
+      "reference_answer": "7.5 liters.",
+      "first_content_seconds": 3.672536982998281,
+      "input_tokens": 230,
+      "output_tokens": 612,
+      "answer": "Three batches need 7.5 liters. That's two point five liters per batch times three.",
+      "seconds": 3.7915761759977613,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "nemotron-3-nano:30b",
+        "think": true,
+        "temperature": 0,
+        "num_predict": 768
+      },
+      "case_id": "time",
+      "reference_answer": "9:45.",
+      "first_content_seconds": 1.8957353879995935,
+      "input_tokens": 230,
+      "output_tokens": 349,
+      "answer": "You arrive at 9:45. That's forty-five minutes before the 10:30 appointment.",
+      "seconds": 2.012455881002097,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "gemma4:31b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "updated-budget",
+      "reference_answer": "48 dollars remain.",
+      "first_content_seconds": 0.4150725759973284,
+      "input_tokens": 414,
+      "output_tokens": 8,
+      "answer": "You have $48 remaining.",
+      "seconds": 0.4951496709982166,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "gemma4:31b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "alternate-budget",
+      "reference_answer": "83 dollars remain.",
+      "first_content_seconds": 0.41751147499962826,
+      "input_tokens": 238,
+      "output_tokens": 9,
+      "answer": "You have 83 dollars remaining.",
+      "seconds": 0.50301496999964,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "gemma4:31b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "alternate-expenses",
+      "reference_answer": "44 dollars remain.",
+      "first_content_seconds": 0.4313839749993349,
+      "input_tokens": 233,
+      "output_tokens": 8,
+      "answer": "You have forty four dollars remaining.",
+      "seconds": 0.549441568000475,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "gemma4:31b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "multiplication",
+      "reference_answer": "102.",
+      "first_content_seconds": 0.41508657499798574,
+      "input_tokens": 216,
+      "output_tokens": 11,
+      "answer": "Seventeen times six is one hundred two.",
+      "seconds": 0.5466622669991921,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "gemma4:31b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "division",
+      "reference_answer": "12.",
+      "first_content_seconds": 0.39565217700146604,
+      "input_tokens": 220,
+      "output_tokens": 11,
+      "answer": "One hundred forty four divided by twelve is twelve.",
+      "seconds": 0.5059182710028836,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "gemma4:31b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "negative",
+      "reference_answer": "Negative eight.",
+      "first_content_seconds": 0.4588947720003489,
+      "input_tokens": 218,
+      "output_tokens": 10,
+      "answer": "Twenty three minus thirty one is negative eight.",
+      "seconds": 0.5907267649999994,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "gemma4:31b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "decimal",
+      "reference_answer": "7.5 liters.",
+      "first_content_seconds": 0.42330657499769586,
+      "input_tokens": 228,
+      "output_tokens": 9,
+      "answer": "Three batches need seven point five liters.",
+      "seconds": 0.5539473669996369,
+      "anchor_passed": true
+    },
+    {
+      "candidate": {
+        "model": "gemma4:31b",
+        "think": false,
+        "temperature": 0,
+        "num_predict": 192
+      },
+      "case_id": "time",
+      "reference_answer": "9:45.",
+      "first_content_seconds": 0.6653967610000109,
+      "input_tokens": 230,
+      "output_tokens": 8,
+      "answer": "You arrive at nine forty five.",
+      "seconds": 0.7871475530009775,
+      "anchor_passed": true
+    }
+  ]
+}

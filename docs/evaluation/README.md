@@ -1,13 +1,14 @@
 # Voca evaluation — 25 October 2026
 
 These measurements belong to Voca, on a GTX 1660 Ti with 6 GiB VRAM.
-They are development evidence, not a completed container release qualification.
+Native development comparisons and initial container release evidence are separated below.
 Cloud LLM hardware is outside local resource measurements.
 
 | Component / comparison | Cases | Result |
 | --- | ---: | --- |
 | Whisper small.en CUDA baseline, beam 1 | 40 human recordings | WER **6.60%**, CER **2.80%** |
 | Same decoder, noisy/quiet variants | 18 | WER **16.67%**, CER **7.27%** |
+| Actual Silero + endpoint clip activation | 58 speech/stress + 6 non-speech clips | **58/58 detected**, **0/6 false activations** |
 | Paired CPU / GPU decoder timing | 8 recordings | Median **2.668 / 0.455 s**, approximately **5.86×** decoder speedup |
 | Kokoro CPU / GPU generation | 32 identical phrases | Median **2.093 / 0.418 s**, approximately **5.01×** generation speedup |
 | Independent Whisper large-v3 audit of Kokoro output | 32 CPU + 32 GPU files | Both WER **8.52%**, CER **7.10%**; every paired recognition transcript identical |
@@ -39,6 +40,12 @@ per-sentence percentages. Normalization lowercases NFKC text and replaces punctu
 with spaces; number spellings remain literal. CER includes spaces. Six raw decoder
 non-speech probes produced four hallucinated words; they bypass VAD and do not prove
 four live false turns. The real-browser silence checks passed.
+
+An actual Silero/endpoint pass detected at least one speech turn in all 58
+speech/stress clips and none in the six non-speech probes. This is clip-level
+activation, with no human frame/boundary labels: it does not establish frame-level
+accuracy, endpoint timing, or broad noise robustness. Its aggregate evidence is
+[`vad-clip-activation.json`](measurements/vad-clip-activation.json).
 
 TTS has fixed original text, saved waveform hashes, signal checks, generation timing
 and independent known-English Whisper large-v3 recognition. This measures agreement,
@@ -72,15 +79,14 @@ turn's completion predicate. The corrected predicate requires a final transcript
 and current-turn reply. The earlier failed run is retained locally, not counted as
 a model regression or silently overwritten. The corrected six-case suite passed.
 
-The complete GPU browser rerun passed 17/20 checks. The remaining failures are the story summary (omitted names/place and changed cancellation into missing a train) and the ambiguous teaching request plus its follow-up. Recovery and silence passed. A documentation rendering job briefly overlapped this functional run; its latency observations are not a dedicated isolated performance qualification. Docker image qualification and release
-CI remain pending; this report does not claim that they have passed.
+The complete native GPU browser rerun passed 17/20 checks. The remaining failures were the story summary and the ambiguous teaching request plus its follow-up. Recovery and silence passed. A documentation rendering job briefly overlapped that functional run; its latency observations are not a dedicated isolated performance qualification. Subsequent container qualification is recorded separately below.
 
 ## Subsequent fixes and release policy
 
 Removing a rigid response word count and explicitly preserving causes fixed the
 targeted story-summary regression. Both Nemotron and Gemma were compared on the same
 captured development transcripts; neither reliably recovered the intended spelling
-after Whisper rendered both words as “effect”. Gemma was not adopted on this evidence.
+after Whisper rendered both words as “effect”. That comparison did not establish a reason to switch models; a later numerical regression comparison did, as recorded below.
 
 Version 2 of the dialogue adds a user clarification, retaining all 20 original
 waveforms by hash and generating one additional input. Its native run passed 18/21:
@@ -97,3 +103,40 @@ deliver an 80-frame burst in order without closing the session and reject prolon
 overflow at a bounded queue size. Fourteen offline tests cover these behaviors,
 origin/session rejection, invalid controls and audio frames, interruption timing,
 cloud content deadlines and phrase/playback ordering.
+
+## Completed initial release and a blocked regression
+
+[Release 40211491285](https://github.com/bmaged23/voice-conversation/actions/runs/40211491285)
+passed hosted tests/build, GPU qualification, Docker Hub publication, anonymous pull
+and normal startup for source `3ee337ef08c686ffd7b14a0c57eda5d5fce7d809`.
+Its immutable public image is `bmaged23/voice-conversation@sha256:3961a412fe51c812bb07c2527cbae542babf23f3c05d3508c564dcc00cf7107b`.
+The [aggregate evidence](measurements/initial-qualified-container.json) records
+64/64 ASR executions, human WER/CER **6.60%/2.64%** with beam 3, 32/32 TTS generations
+and independent audits, TTS agreement **8.52%/7.10%**, and **18/21** browser checks.
+Its median warm phrase generation was **0.600 s**, separate from the native 0.418 s comparison.
+
+[Candidate bf482a1](https://github.com/bmaged23/voice-conversation/actions/runs/40211839640)
+passed speech checks but returned **58 dollars instead of 48** in the budget dialogue.
+The gate [blocked publication](measurements/blocked-container-bf482a1.json).
+It was not rerun unchanged to obtain a favorable score. Both old local candidates
+were subsequently removed to reclaim laptop space; published registry artifacts remain.
+
+## Reasoning configuration selection
+
+Eight numerical/time regressions were frozen before one comparative run per configuration.
+The captured failing budget context is retained in the public dataset, alongside
+alternative budgets, expenses, multiplication, division, negatives, decimals and time.
+
+| Configuration | Correct required answers | Median first text | Reported output tokens, all eight |
+| --- | ---: | ---: | ---: |
+| Nemotron 3 Nano, thinking off, temperature 0 | 7/8 | 0.570 s | 96 |
+| Nemotron 3 Nano, thinking on, temperature 0 | 8/8 | 3.562 s | 4,108 |
+| Gemma 4 31B, thinking off, temperature 0 | 8/8 | 0.420 s | 74 |
+
+Answers were manually reviewed; [summary](measurements/reasoning-configuration-comparison.json)
+and [synthetic outputs](measurements/reasoning-configuration-outputs.json) are retained.
+Gemma with thinking off and temperature zero is the next configured candidate.
+These are eight exposed development examples, not general reasoning rankings or
+monetary-price comparisons. The new gate requires all eight reasoning regressions,
+actual VAD clip checks and the existing speech/conversation criteria before publication.
+Final lean-image qualification remains pending.

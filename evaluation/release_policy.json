@@ -1,15 +1,39 @@
 {
   "version": 1,
   "scope": "Development regression gate, frozen before container qualification. Not an untouched general-language benchmark.",
-  "stt": {"cases": 64, "human_wer_max": 0.08, "human_cer_max": 0.04, "stress_wer_max": 0.20},
-  "tts": {"cases": 32, "agreement_wer_max": 0.0952, "agreement_cer_max": 0.0810},
+  "stt": {
+    "cases": 64,
+    "human_wer_max": 0.08,
+    "human_cer_max": 0.04,
+    "stress_wer_max": 0.2
+  },
+  "tts": {
+    "cases": 32,
+    "agreement_wer_max": 0.0952,
+    "agreement_cer_max": 0.081
+  },
   "browser": {
     "dataset": "evaluation/datasets/conversation-flows-v2.json",
     "inputs": ".evaluation-local/flow-inputs-v2/inputs.json",
     "cases": 21,
     "minimum_total_passed": 18,
-    "known_quality_limitations": ["teaching-difference", "teaching-clarification", "teaching-examples"],
+    "known_quality_limitations": [
+      "teaching-difference",
+      "teaching-clarification",
+      "teaching-examples"
+    ],
     "require_all_other_cases": true,
     "explanation": "Small English ASR collapses affect/effect; both tested cloud models sometimes accept the resulting spelling despite supplied definitions. These failures remain scored and published; all other conversation checks must pass. This is not a 21/21 accuracy claim."
+  },
+  "vad": {
+    "cases": 64,
+    "false_negatives_max": 0,
+    "false_positives_max": 0,
+    "scope": "Clip-level activation on 58 speech/stress clips and six synthetic nonspeech probes; not frame accuracy."
+  },
+  "llm": {
+    "cases": 8,
+    "required_passed": 8,
+    "scope": "Configured production stream on frozen numeric/time development regressions."
   }
 }

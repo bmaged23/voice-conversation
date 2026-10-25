@@ -10,7 +10,8 @@ The [release workflow](../../.github/workflows/release.yml) separates these stag
 1. GitHub-hosted pinned installation and offline tests.
 2. GitHub-hosted Linux amd64 image build, staged under an immutable GHCR digest.
 3. A trusted `voca-gpu` laptop runner pulls that digest and checks the image revision.
-4. The container runs offline tests, 64 frozen ASR cases and 32 TTS phrases.
+4. The container runs offline tests, eight cloud reasoning cases, actual VAD on
+   64 clips, 64 frozen ASR cases and 32 TTS phrases.
    An independent local Whisper large-v3 process scores the saved generated audio.
    Chromium runs 21 connected microphone turns against the candidate container.
 5. The explicit [release policy](../../evaluation/release_policy.json) assesses
@@ -54,3 +55,17 @@ Open `http://localhost:8765`, allow microphone access and wait for readiness.
 The cloud key and selected model need valid account access. Stop with Ctrl+C.
 Production speech assets download at build time; model initialization happens at
 startup. A release is verified only after its public pull/startup evidence exists.
+
+## Image dependency and cache layout
+
+Native installation uses the two exact environment snapshots. The image derives
+its exact pins with `scripts.dependencies.prepare_container_requirements`, shares
+CUDA/cuDNN versions from the qualified GPU voice snapshot, and keeps CPU/GPU ONNX
+in separate interpreters. The generated lists are retained inside the image under
+`/app/deployment/runtime-pins`. Sharing avoids duplicate large CUDA libraries;
+all speech gates must pass with that image configuration before publication.
+
+Dependency installation and production model downloads have separate cached layers.
+Application-only edits no longer invalidate those large setup layers. Model setup
+uses pinned revisions, direct release URLs and every reviewed file checksum; it
+never silently replaces the human evaluation gold references.

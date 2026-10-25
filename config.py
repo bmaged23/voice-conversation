@@ -52,7 +52,7 @@ CONFIG = {
         "api_key_env": "OLLAMA_API_KEY",
         "model_env": "OLLAMA_MODEL",
         "stream": True,
-        "temperature": 0.2,
+        "temperature": 0,
         "max_response_tokens": 192,
         "history_max_turns": 12,
         "request_timeout_seconds": 60,

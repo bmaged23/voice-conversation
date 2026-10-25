@@ -19,7 +19,7 @@ The video player and interactive diagram are hosted with GitHub Pages. You can a
 1. **Capture:** the browser captures your microphone, requests echo cancellation and noise suppression, and sends 16 kHz mono audio in 512-sample frames over a local WebSocket.
 2. **Detect:** Silero VAD on the CPU distinguishes speech from silence. The initial end-of-turn threshold is 700 ms of silence; a turn is capped at 30 seconds.
 3. **Transcribe:** a GPU faster-whisper worker produces rolling previews, then decodes the full turn. Previews stay local; only finalized transcripts go to the LLM.
-4. **Converse:** Nemotron 3 Nano 30B runs on Ollama Cloud with streaming enabled, thinking disabled, bounded history and short English responses.
+4. **Converse:** Gemma 4 31B runs on Ollama Cloud with streaming enabled, thinking disabled, bounded history and short English responses.
 5. **Speak:** streamed text is buffered into short phrases. An isolated GPU Kokoro worker synthesizes them while earlier audio plays in the browser. Bounded queues prevent unlimited buffering; CPU synthesis remains configurable.
 6. **Interrupt:** confirmed new speech cancels the response, clears queued audio and stops playback. A short inference already running may finish internally, but its stale output is ignored. History retains only fully played assistant phrases.
 
@@ -54,7 +54,7 @@ playback acknowledgements. See the [API README](docs/api/README.md) for endpoint
 audio formats and the single-session local scope.
 
 GitHub [offline CI](.github/workflows/tests.yml) runs the pinned installation and unit
-tests on pushes and pull requests. The [GPU release workflow](docs/deployment/README.md) builds and qualifies a container before publication. Its first remote run is pending; offline CI alone does not run the speech/cloud models.
+tests on pushes and pull requests. The [GPU release workflow](docs/deployment/README.md) builds and qualifies a container before publication. Its first release passed through anonymous Docker Hub startup verification. A later arithmetic regression correctly blocked publication; the leaner Gemma candidate is being qualified. Offline CI alone does not run the speech/cloud models.
 
 ## Requirements
 
@@ -116,7 +116,7 @@ Edit `.env` locally:
 
 ```dotenv
 OLLAMA_API_KEY=YOUR_OLLAMA_API_KEY
-OLLAMA_MODEL=nemotron-3-nano:30b
+OLLAMA_MODEL=gemma4:31b
 OLLAMA_BASE_URL=https://ollama.com
 ```
 
@@ -177,22 +177,24 @@ All runtime tuning lives in [`config.py`](config.py). See the complete [paramete
 
 | Setting | Default |
 | --- | --- |
-| STT | `small.en`, CUDA device 0, `int8_float32`, beam size 1 |
+| STT | `small.en`, CUDA device 0, `int8_float32`, beam size 3 |
 | STT preview | Every 600 ms when the worker is available; latest 10 seconds |
 | VAD | Threshold 0.5; configured minimum speech 200 ms |
 | End of turn | 700 ms silence |
 | Interruption | Enabled; effective minimum speech 256 ms |
-| TTS | CPU, `af_heart`, slightly brisk speed 1.05 |
+| TTS | Isolated CUDA runtime, `af_heart`, speed 1.05 |
 | Phrase sizes | 40–180 characters; safe-boundary flush timeout 350 ms |
-| LLM | Streaming, thinking off, temperature 0.6, maximum 192 response tokens |
-| Speech workers | 1 STT process + 1 TTS process |
+| LLM | Streaming, thinking off, temperature 0, maximum 192 response tokens |
+| Cloud deadlines | 15 seconds to first content; 15 seconds between content updates |
+| Speech workers | 1 STT process; 1 TTS coordinator with an isolated GPU voice process |
 | Queues | 3 TTS phrases; 3 playback chunks; 32 streamed text items |
+| Microphone buffering | 64 KiB WebSocket buffer; up to 125 queued frames; poll every 8 ms |
 | Concurrency | 1 browser session, 1 web worker |
 | Logging | INFO; live audio and transcript recording disabled |
 
-The 700 ms threshold is evaluated in 32 ms frames, so it is reached at approximately 704 ms. Increasing process counts loads additional model copies; it does not automatically reduce latency. This build uses CPU TTS. The fixed provider labels identify implemented adapters and cannot switch backends by themselves.
+The 700 ms threshold is evaluated in 32 ms frames, so it is reached at approximately 704 ms. Increasing process counts loads additional model copies; it does not automatically reduce latency. Separate ONNX environments keep GPU TTS compatible with the CPU VAD and GPU STT libraries. Provider labels identify implemented adapters and cannot switch backends by themselves.
 
-CPU-only **Linux** experimentation can use the same requirements and set `CONFIG['stt']['device']='cpu'` and `compute_type='int8'`; speech will usually be slower. This path is an alternative, not the GPU configuration used for the demo.
+CPU-only **Linux** experimentation can use the main environment and set `CONFIG['stt']['device']='cpu'`, its `compute_type='int8'`, and `CONFIG['tts']['device']='cpu'`. This alternative does not need the GPU voice environment. Component CPU timings are reported separately; the release image targets NVIDIA GPU use.
 
 ## Verification
 
@@ -203,13 +205,14 @@ python -m scripts.application.start_voice_app -m scripts.validation.validate_spe
 python -m scripts.validation.validate_voice_session
 ```
 
-The offline tests cover phrase buffering, VAD endpointing, queue backpressure/order, interruption cancellation and Kokoro ONNX input compatibility. The synthetic session test exercises real STT, cloud streaming and TTS, but simulates browser playback acknowledgments.
+The 14 offline tests cover phrase buffering, VAD endpointing, playback backpressure/order, immediate interruption, cloud content deadlines, malformed controls, audio framing, origin/session rejection and Kokoro input compatibility. The synthetic session test exercises real STT, cloud streaming and TTS, but simulates browser playback acknowledgments. See the [evaluation report](docs/evaluation/README.md) for frozen human/component and real-browser conversation suites.
 
 Optional browser checks:
 
 ```bash
 python -m playwright install chromium
 python -m scripts.validation.validate_browser_interface
+python -m scripts.validation.validate_microphone_transport
 ```
 
 Browser checks use synthetic events and do not call the LLM. Physical microphone quality, acoustic echo and perceived conversation latency still need testing on your device. Timing examples are smoke-test observations, not a general latency or accuracy benchmark.
@@ -221,23 +224,33 @@ voice-conversation/
 ├── config.py                   Runtime settings, thresholds and worker counts
 ├── .env.example                Safe credential template
 ├── requirements.txt            Exact installed environment snapshot
-├── pyproject.toml / uv.lock    Package metadata and uv dependency lock
+├── pyproject.toml              Package metadata
+├── requirements/               GPU voice pins and historical lock archive
+├── deployment/docker/          Complete GPU image recipe
+├── .github/workflows/          Offline/browser CI and gated image delivery
+├── evaluation/                 Frozen datasets and explicit release thresholds
 ├── src/voice_conversation/
 │   ├── server.py               WebSocket session and streaming orchestration
 │   ├── core.py                 Phrase buffering and endpoint detection
-│   ├── workers.py              GPU STT, CPU TTS and Silero ONNX adapters
+│   ├── workers.py              Speech adapters and Silero ONNX
+│   ├── gpu_voice.py            Isolated persistent CUDA voice process
 │   └── settings.py             Config loading and private environment settings
 ├── web/                        Browser UI, audio capture and playback
-├── scripts/                    Downloads, startup, checks and media recording
+├── scripts/                    Setup, application, evaluation, release, validation and media tools
 ├── tests/                      Offline regression tests
 ├── docs/
 │   ├── architecture.html       Interactive animated architecture
 │   ├── assets/                 Animated diagram and model revision manifest
+│   ├── api/                    HTTP and streaming protocol documentation
+│   ├── evaluation/             Measured results, charts and limitations
+│   ├── deployment/             Release stages and GPU qualification
+│   ├── notices/                Upstream model/runtime notices
 │   ├── demo.html               Standalone video player
 │   └── demo/                   MP4, poster, transcript and recording notes
 ├── models/                     Downloaded models (ignored)
 ├── logs/                       Local test recordings and reports (ignored)
-└── .venv/                      Project Python environment (ignored)
+├── .venv/                      Main environment (ignored)
+└── .venv-tts-gpu/              Isolated GPU voice environment (ignored)
 ```
 
 ## Sharing the demo
@@ -296,7 +309,7 @@ Live microphone audio and synthesized speech remain local. Finalized transcripts
 This is a prototype with silence-based endpointing, conservative completed-phrase history, and one active session. It does not include semantic turn detection, word-level playback alignment, external task tools or a guaranteed echo-cancellation system.
 
 - [Ollama Cloud API](https://docs.ollama.com/cloud)
-- [Nemotron 3 Nano](https://ollama.com/library/nemotron-3-nano)
+- [Gemma 4](https://ollama.com/library/gemma4)
 - [faster-whisper](https://github.com/SYSTRAN/faster-whisper) · [English Small checkpoint](https://huggingface.co/Systran/faster-whisper-small.en)
 - [Silero VAD](https://github.com/snakers4/silero-vad)
 - [Kokoro ONNX](https://github.com/thewh1teagle/kokoro-onnx) · [Kokoro model](https://huggingface.co/hexgrad/Kokoro-82M)

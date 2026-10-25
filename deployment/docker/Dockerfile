@@ -10,23 +10,34 @@ ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-COPY requirements.txt pyproject.toml ./
-COPY requirements ./requirements
-COPY src ./src
-RUN python -m venv .venv && \
-    .venv/bin/python -m pip install --no-cache-dir --no-deps -r requirements.txt && \
-    .venv/bin/python -m pip check && \
+COPY requirements.txt ./
+COPY requirements/tts-gpu.txt ./requirements/tts-gpu.txt
+COPY scripts/__init__.py ./scripts/__init__.py
+COPY scripts/dependencies ./scripts/dependencies
+# Cache the large environments independently of application/source edits.
+RUN python -m scripts.dependencies.prepare_container_requirements --output /tmp/runtime-pins && \
+    python -m venv .venv && \
+    .venv/bin/python -m pip install --no-cache-dir --no-deps -r /tmp/runtime-pins/main.txt && \
     python -m venv .venv-tts-gpu && \
-    .venv-tts-gpu/bin/python -m pip install --no-cache-dir --no-deps -r requirements/tts-gpu.txt
+    .venv-tts-gpu/bin/python -m pip install --no-cache-dir --no-deps -r /tmp/runtime-pins/voice.txt && \
+    mkdir -p deployment/runtime-pins && cp /tmp/runtime-pins/*.txt deployment/runtime-pins/
+# Only asset provisioning inputs invalidate the production-model layer.
+COPY scripts/__init__.py ./scripts/__init__.py
+COPY scripts/setup ./scripts/setup
+COPY docs/assets/model-manifest.json ./docs/assets/model-manifest.json
+RUN .venv/bin/python -m scripts.setup.download_speech_models --models models && \
+    rm -rf .cache models/whisper-small.en/.cache
+COPY pyproject.toml ./
+COPY src ./src
+RUN .venv/bin/python -m pip install --no-cache-dir --no-deps -e . && \
+    .venv/bin/python -m pip check
 COPY config.py ./
 COPY scripts ./scripts
 COPY web ./web
 COPY docs ./docs
 COPY evaluation ./evaluation
 COPY tests ./tests
-RUN .venv/bin/python -m scripts.setup.download_speech_models && \
-    rm -rf .cache models/whisper-small.en/.cache && \
-    useradd --uid 10001 --create-home voca && \
+RUN useradd --uid 10001 --create-home voca && \
     mkdir -p logs .cache && chown -R voca:voca logs .cache && \
     .venv/bin/python -m pytest -q
 USER voca

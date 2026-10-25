@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "scope": "Eight manually authored development regressions frozen before the comparative run; first case preserves captured synthetic failure context. Required-anchor checks plus manual answer review, not an independent general reasoning leaderboard.",
+  "candidates": [
+    {
+      "model": "nemotron-3-nano:30b",
+      "think": false,
+      "temperature": 0,
+      "num_predict": 192
+    },
+    {
+      "model": "nemotron-3-nano:30b",
+      "think": true,
+      "temperature": 0,
+      "num_predict": 768
+    },
+    {
+      "model": "gemma4:31b",
+      "think": false,
+      "temperature": 0,
+      "num_predict": 192
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "updated-budget",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Am planning a surprise birthday picnic for Emma there will be six people my budget is $80 All food must be vegan and one guest has a peanut allergy briefly repeat those constraints"
+        },
+        {
+          "role": "assistant",
+          "content": "You\u2019re planning a surprise birthday picnic for Emma with six people, a $80 budget, all food must be vegan, and one guest has a peanut allergy. "
+        },
+        {
+          "role": "user",
+          "content": "Change the plan. There will be seven people and the budget is now $90. Briefly confirm the updated numbers."
+        },
+        {
+          "role": "assistant",
+          "content": "You\u2019re planning a surprise birthday picnic for Emma with seven people and a $90 budget. "
+        },
+        {
+          "role": "user",
+          "content": "Suggest one simple snack that fits our food restrictions."
+        },
+        {
+          "role": "assistant",
+          "content": "Try a fresh fruit and veggie platter with hummus dip. It\u2019s vegan, easy to prepare, and safe for a peanut allergy. "
+        },
+        {
+          "role": "user",
+          "content": "From our current budget, we spend $24 on food and $18 on decorations. How many dollars remain?"
+        }
+      ],
+      "expected_any": [
+        "48",
+        "forty eight"
+      ],
+      "reference_answer": "48 dollars remain."
+    },
+    {
+      "case_id": "alternate-budget",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Our budget is now 125 dollars. We spend 24 on food and 18 on decorations. How much remains?"
+        }
+      ],
+      "expected_any": [
+        "83",
+        "eighty three"
+      ],
+      "reference_answer": "83 dollars remain."
+    },
+    {
+      "case_id": "alternate-expenses",
+      "messages": [
+        {
+          "role": "user",
+          "content": "From our current budget of ninety dollars, we spend nineteen on food and twenty seven on decorations. How much remains?"
+        }
+      ],
+      "expected_any": [
+        "44",
+        "forty four"
+      ],
+      "reference_answer": "44 dollars remain."
+    },
+    {
+      "case_id": "multiplication",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is seventeen times six?"
+        }
+      ],
+      "expected_any": [
+        "102",
+        "one hundred two",
+        "one hundred and two"
+      ],
+      "reference_answer": "102."
+    },
+    {
+      "case_id": "division",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is one hundred forty four divided by twelve?"
+        }
+      ],
+      "expected_any": [
+        "12",
+        "twelve"
+      ],
+      "reference_answer": "12."
+    },
+    {
+      "case_id": "negative",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is twenty three minus thirty one?"
+        }
+      ],
+      "expected_any": [
+        "minus eight",
+        "negative eight",
+        "-8"
+      ],
+      "reference_answer": "Negative eight."
+    },
+    {
+      "case_id": "decimal",
+      "messages": [
+        {
+          "role": "user",
+          "content": "A recipe uses two point five liters per batch. How many liters do three batches need?"
+        }
+      ],
+      "expected_any": [
+        "7.5",
+        "seven point five"
+      ],
+      "reference_answer": "7.5 liters."
+    },
+    {
+      "case_id": "time",
+      "messages": [
+        {
+          "role": "user",
+          "content": "An appointment starts at ten thirty. I arrive forty five minutes earlier. What time do I arrive?"
+        }
+      ],
+      "expected_any": [
+        "9:45",
+        "nine forty five"
+      ],
+      "reference_answer": "9:45."
+    }
+  ]
+}
