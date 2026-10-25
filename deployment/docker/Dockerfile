@@ -1,9 +1,5 @@
 # syntax=docker/dockerfile:1
 FROM python:3.12.15-slim-bookworm AS application
-ARG VCS_REF=development
-LABEL org.opencontainers.image.source="https://github.com/bmaged23/voice-conversation" \
-      org.opencontainers.image.title="Voca — English speech-to-speech conversation" \
-      org.opencontainers.image.revision=$VCS_REF
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 HF_HOME=/app/.cache/huggingface \
     PATH=/app/.venv/bin:$PATH
@@ -40,6 +36,11 @@ COPY tests ./tests
 RUN useradd --uid 10001 --create-home voca && \
     mkdir -p logs .cache && chown -R voca:voca logs .cache && \
     .venv/bin/python -m pytest -q
+# Keep changing revision metadata out of all dependency/model RUN environments.
+ARG VCS_REF=development
+LABEL org.opencontainers.image.source="https://github.com/bmaged23/voice-conversation" \
+      org.opencontainers.image.title="Voca — English speech-to-speech conversation" \
+      org.opencontainers.image.revision=$VCS_REF
 USER voca
 EXPOSE 8765
 HEALTHCHECK --interval=15s --timeout=5s --start-period=180s --retries=3 \

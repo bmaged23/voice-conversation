@@ -30,7 +30,7 @@ def main():
                 "--name",
                 name,
                 "-p",
-                "127.0.0.1:8765:8765",
+                "127.0.0.1::8765",
                 "-e",
                 "OLLAMA_API_KEY",
                 "-e",
@@ -41,11 +41,14 @@ def main():
             ],
             check=True,
         )
+        mapping = subprocess.check_output(
+            ["docker", "port", name, "8765/tcp"], text=True
+        ).strip()
+        port = int(mapping.rsplit(":", 1)[1])
+        base = f"http://127.0.0.1:{port}"
         for _ in range(180):
             try:
-                with urllib.request.urlopen(
-                    "http://127.0.0.1:8765/health", timeout=2
-                ) as response:
+                with urllib.request.urlopen(base + "/health", timeout=2) as response:
                     health = json.load(response)
                 assert health["stt_device"] == health["tts_device"] == "cuda"
                 break
@@ -53,10 +56,10 @@ def main():
                 time.sleep(1)
         else:
             raise TimeoutError("Public container readiness deadline")
-        with urllib.request.urlopen("http://127.0.0.1:8765/", timeout=5) as response:
+        with urllib.request.urlopen(base + "/", timeout=5) as response:
             assert b"Voca" in response.read()
         try:
-            urllib.request.urlopen("http://127.0.0.1:8765/__qa__/usage", timeout=5)
+            urllib.request.urlopen(base + "/__qa__/usage", timeout=5)
         except urllib.error.HTTPError as error:
             assert error.code == 404
         else:

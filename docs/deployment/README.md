@@ -69,3 +69,9 @@ Dependency installation and production model downloads have separate cached laye
 Application-only edits no longer invalidate those large setup layers. Model setup
 uses pinned revisions, direct release URLs and every reviewed file checksum; it
 never silently replaces the human evaluation gold references.
+
+Revision labels are applied after all build-time `RUN` steps so each commit's SHA
+cannot invalidate cached dependency/model layers through the build environment.
+See [Docker's ARG cache behavior](https://docs.docker.com/reference/dockerfile/#impact-on-build-caching).
+The public startup check selects an ephemeral localhost port, so it does not need
+to stop an interactive application already using port8765.
