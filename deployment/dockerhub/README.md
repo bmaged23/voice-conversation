@@ -67,3 +67,23 @@ paired outputs, with WER/CER agreement 8.52%/7.10%; this is not human MOS. The o
 results are reported separately. Component speedups are not whole-conversation speedups.
 
 Models and speech runtimes retain their [upstream notices](https://github.com/bmaged23/voice-conversation/blob/main/docs/notices/README.md).
+
+## Qualified release measurements
+
+[Passing release and immutable evidence](https://github.com/bmaged23/voice-conversation/actions/runs/40223674458):
+source `9ac91404ee1634c512f46e03b263fedb737277c8`, image
+`bmaged23/voice-conversation@sha256:60fe05514e98ac477de8a4a9935f2ab61c6d9f880fd25c37c6c5fda94bfdc7f3`.
+
+The final container passed 8/8 reasoning cases, VAD clip checks, 64/64 ASR executions,
+32/32 TTS generations and independent audits, and 19/21 connected browser turns.
+Human ASR WER/CER: **6.60%/2.64%**. TTS recognition agreement WER/CER:
+**8.52%/7.10%**, a proxy rather than human listening scores.
+
+Median first audio after recording ended: **1.99 s**; p95 **6.18 s** over 19
+voice-producing turns. Sampled backend memory peak: **1,828 MiB**; whole-device VRAM
+peak: **1,747 MiB**. CPU mean/peak: **110%/351%**, with 100% representing one logical
+core. Cloud hardware is excluded. Measurements are from one GTX 1660 Ti setup.
+
+Docker's reported local size is **8.51 GB**, approximately 28.5% below the earlier
+11.9 GB image. Allow at least **15 GiB free disk space** for pulling/unpacking and
+working headroom. This local size is distinct from compressed registry download size.

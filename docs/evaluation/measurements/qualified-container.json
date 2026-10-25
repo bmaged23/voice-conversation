@@ -1,0 +1,359 @@
+{
+  "source_sha": "9ac91404ee1634c512f46e03b263fedb737277c8",
+  "image": "ghcr.io/bmaged23/voice-conversation-candidates@sha256:60fe05514e98ac477de8a4a9935f2ab61c6d9f880fd25c37c6c5fda94bfdc7f3",
+  "image_id": "sha256:60fe05514e98ac477de8a4a9935f2ab61c6d9f880fd25c37c6c5fda94bfdc7f3",
+  "policy": {
+    "version": 1,
+    "scope": "Development regression gate, frozen before container qualification. Not an untouched general-language benchmark.",
+    "stt": {
+      "cases": 64,
+      "human_wer_max": 0.08,
+      "human_cer_max": 0.04,
+      "stress_wer_max": 0.2
+    },
+    "tts": {
+      "cases": 32,
+      "agreement_wer_max": 0.0952,
+      "agreement_cer_max": 0.081
+    },
+    "browser": {
+      "dataset": "evaluation/datasets/conversation-flows-v2.json",
+      "inputs": ".evaluation-local/flow-inputs-v2/inputs.json",
+      "cases": 21,
+      "minimum_total_passed": 18,
+      "known_quality_limitations": [
+        "teaching-difference",
+        "teaching-clarification",
+        "teaching-examples"
+      ],
+      "require_all_other_cases": true,
+      "explanation": "Small English ASR collapses affect/effect; both tested cloud models sometimes accept the resulting spelling despite supplied definitions. These failures remain scored and published; all other conversation checks must pass. This is not a 21/21 accuracy claim."
+    },
+    "vad": {
+      "cases": 64,
+      "false_negatives_max": 0,
+      "false_positives_max": 0,
+      "scope": "Clip-level activation on 58 speech/stress clips and six synthetic nonspeech probes; not frame accuracy."
+    },
+    "llm": {
+      "cases": 8,
+      "required_passed": 8,
+      "scope": "Configured production stream on frozen numeric/time development regressions."
+    }
+  },
+  "checks": {
+    "llm_regressions": true,
+    "vad_complete": true,
+    "vad_speech_detection": true,
+    "vad_nonspeech_activation": true,
+    "stt_complete": true,
+    "stt_human_wer": true,
+    "stt_human_cer": true,
+    "stt_stress_wer": true,
+    "tts_complete": true,
+    "tts_agreement_wer": true,
+    "tts_agreement_cer": true,
+    "browser_complete": true,
+    "browser_required_cases": true,
+    "browser_total_floor": true,
+    "no_javascript_errors": true
+  },
+  "passed": true,
+  "stt": {
+    "selected": 64,
+    "completed": 64,
+    "failed": 0,
+    "model_load_seconds": 1.2167793539993,
+    "device": "cuda",
+    "human": {
+      "reference_words": 1015,
+      "reference_characters": 5718,
+      "word_errors": 67,
+      "character_errors": 151,
+      "substitutions": 46,
+      "deletions": 9,
+      "insertions": 12,
+      "hallucinated_words_on_empty_reference": 0,
+      "samples": 40,
+      "wer": 0.06600985221674877,
+      "cer": 0.02640783490731025,
+      "exact_rate": 0.325
+    },
+    "development_human": {
+      "reference_words": 552,
+      "reference_characters": 3109,
+      "word_errors": 41,
+      "character_errors": 97,
+      "substitutions": 28,
+      "deletions": 4,
+      "insertions": 9,
+      "hallucinated_words_on_empty_reference": 0,
+      "samples": 20,
+      "wer": 0.07427536231884058,
+      "cer": 0.031199742682534577,
+      "exact_rate": 0.3
+    },
+    "validation_human": {
+      "reference_words": 463,
+      "reference_characters": 2609,
+      "word_errors": 26,
+      "character_errors": 54,
+      "substitutions": 18,
+      "deletions": 5,
+      "insertions": 3,
+      "hallucinated_words_on_empty_reference": 0,
+      "samples": 20,
+      "wer": 0.056155507559395246,
+      "cer": 0.020697585281717133,
+      "exact_rate": 0.35
+    },
+    "stress": {
+      "reference_words": 402,
+      "reference_characters": 2187,
+      "word_errors": 64,
+      "character_errors": 148,
+      "substitutions": 42,
+      "deletions": 13,
+      "insertions": 9,
+      "hallucinated_words_on_empty_reference": 0,
+      "samples": 18,
+      "wer": 0.15920398009950248,
+      "cer": 0.06767261088248742,
+      "exact_rate": 0.3888888888888889
+    },
+    "nonspeech": {
+      "reference_words": 0,
+      "reference_characters": 0,
+      "word_errors": 4,
+      "character_errors": 12,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 4,
+      "hallucinated_words_on_empty_reference": 4,
+      "samples": 6,
+      "wer": 4.0,
+      "cer": 12.0,
+      "exact_rate": 0.3333333333333333
+    },
+    "median_decode_seconds": 0.4164241395010322,
+    "median_rtf": 0.04210504879133184,
+    "resources": {
+      "samples": 55,
+      "metrics": {
+        "rss_mib": {
+          "mean": 564.4031960227272,
+          "peak": 576.75
+        },
+        "cpu_percent_one_core": {
+          "mean": 332.59818181818184,
+          "peak": 644.5
+        },
+        "cpu_percent_machine": {
+          "mean": 27.71651515151515,
+          "peak": 53.708333333333336
+        },
+        "system_ram_used_mib": {
+          "mean": 2028.1541193181818,
+          "peak": 2071.21484375
+        },
+        "gpu_vram_mib": {
+          "mean": 487.3454545454546,
+          "peak": 555.0
+        },
+        "gpu_util_percent": {
+          "mean": 46.89090909090909,
+          "peak": 65.0
+        }
+      },
+      "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
+    },
+    "scope": "Offline whole-recording final decode, not real-time endpoint/preview/cloud/TTS latency. Nonspeech probes bypass VAD and are not automatically live user turns. Stress variants are not independent recordings. WER/CER use lowercase NFKC and punctuation-to-space normalization with literal number spellings."
+  },
+  "llm": {
+    "cases": 8,
+    "passed": 8,
+    "execution_errors": 0,
+    "model": "gemma4:31b",
+    "think": false,
+    "temperature": 0,
+    "dataset_sha256": "acf817c2cdca6a74ea8de8f2d7d781839ebb9f4c1c3320a585d2a1ab48c1b683",
+    "scope": "Eight exposed development arithmetic/time regressions, configured production streaming function. Required-answer anchors are not a comprehensive semantic judge; no STT/TTS included."
+  },
+  "vad": {
+    "cases": 64,
+    "true_positive": 58,
+    "false_negative": 0,
+    "false_positive": 0,
+    "true_negative": 6,
+    "clip_recall": 1.0,
+    "clip_precision": 1.0,
+    "clip_specificity": 1.0,
+    "settings": {
+      "provider": "silero",
+      "device": "cpu",
+      "speech_threshold": 0.5,
+      "min_speech_ms": 256,
+      "end_of_turn_silence_ms": 700,
+      "prefix_buffer_ms": 300,
+      "max_utterance_seconds": 30,
+      "intra_op_threads": 1,
+      "inter_op_threads": 1
+    },
+    "input_manifest_sha256": "db46a5e42b37896f516045fe71bb9886ba68842010de49981e5f0369f5299ae8",
+    "scope": "Clip-level speech activation only; no human frame/boundary labels, so no frame accuracy or endpoint latency claim. Six nonspeech probes are small synthetic checks. Derived stress variants are not independent speakers."
+  },
+  "tts": {
+    "cases": 32,
+    "failed": 0,
+    "model_load_seconds": 3.012506063998444,
+    "device": "cuda",
+    "median_seconds": 0.45327151200035587,
+    "median_rtf": 0.11198399972932954,
+    "resources": {
+      "samples": 35,
+      "metrics": {
+        "rss_mib": {
+          "mean": 854.153125,
+          "peak": 957.3984375
+        },
+        "cpu_percent_one_core": {
+          "mean": 91.25142857142858,
+          "peak": 102.5
+        },
+        "cpu_percent_machine": {
+          "mean": 7.604285714285713,
+          "peak": 8.541666666666666
+        },
+        "system_ram_used_mib": {
+          "mean": 2174.698325892857,
+          "peak": 2275.05078125
+        },
+        "gpu_vram_mib": {
+          "mean": 714.8285714285714,
+          "peak": 937.0
+        },
+        "gpu_util_percent": {
+          "mean": 31.257142857142856,
+          "peak": 46.0
+        }
+      },
+      "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
+    },
+    "scope": "Warm serial synthesis of fixed bounded phrases; first model load reported separately. Does not include ASR/cloud/browser playback."
+  },
+  "tts_audit": {
+    "cases": 32,
+    "failed": 0,
+    "agreement": {
+      "reference_words": 411,
+      "reference_characters": 2155,
+      "word_errors": 35,
+      "character_errors": 153,
+      "substitutions": 23,
+      "deletions": 9,
+      "insertions": 3,
+      "hallucinated_words_on_empty_reference": 0,
+      "samples": 32,
+      "wer": 0.0851581508515815,
+      "cer": 0.07099767981438515,
+      "exact_rate": 0.625
+    },
+    "resources": {
+      "samples": 76,
+      "metrics": {
+        "rss_mib": {
+          "mean": 1896.9504523026317,
+          "peak": 3088.01171875
+        },
+        "cpu_percent_one_core": {
+          "mean": 180.75526315789475,
+          "peak": 307.6
+        },
+        "cpu_percent_machine": {
+          "mean": 15.062938596491227,
+          "peak": 25.633333333333336
+        },
+        "system_ram_used_mib": {
+          "mean": 3421.7670127467104,
+          "peak": 4497.30859375
+        },
+        "gpu_vram_mib": {
+          "mean": 1735.4868421052631,
+          "peak": 2283.0
+        },
+        "gpu_util_percent": {
+          "mean": 65.97368421052632,
+          "peak": 89.0
+        }
+      },
+      "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
+    },
+    "scope": "Known-language Whisper large-v3 agreement with synthesis text. Not human listening/MOS, not proof which model caused discrepancies. Literal numbers and abbreviations can differ."
+  },
+  "browser": {
+    "selected": 21,
+    "completed": 21,
+    "passed": 19,
+    "javascript_errors": [],
+    "failed": [
+      {
+        "case_id": "teaching-clarification",
+        "checks": [
+          "answer_0"
+        ]
+      },
+      {
+        "case_id": "teaching-examples",
+        "checks": [
+          "answer_0"
+        ]
+      }
+    ],
+    "metrics": {
+      "reference_words": 276,
+      "reference_characters": 1548,
+      "word_errors": 29,
+      "character_errors": 130,
+      "substitutions": 20,
+      "deletions": 9,
+      "insertions": 0,
+      "hallucinated_words_on_empty_reference": 0,
+      "samples": 20,
+      "wer": 0.10507246376811594,
+      "cer": 0.08397932816537468,
+      "exact_rate": 0.45
+    },
+    "resources": {
+      "samples": 510,
+      "metrics": {
+        "rss_mib": {
+          "mean": 722.2096200980392,
+          "peak": 798.1484375
+        },
+        "cpu_percent_one_core": {
+          "mean": 34.78235294117647,
+          "peak": 108.20000000000002
+        },
+        "cpu_percent_machine": {
+          "mean": 2.898529411764706,
+          "peak": 9.016666666666667
+        },
+        "system_ram_used_mib": {
+          "mean": 3022.409267769608,
+          "peak": 3126.95703125
+        },
+        "gpu_vram_mib": {
+          "mean": 1210.9882352941177,
+          "peak": 1779.0
+        },
+        "gpu_util_percent": {
+          "mean": 18.298039215686273,
+          "peak": 68.0
+        }
+      },
+      "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
+    },
+    "scope": "Actual browser, real-time synthetic input, actual model/cloud path except explicitly injected fault. Native process tree includes child server; external-server mode excludes its CPU/RAM."
+  },
+  "limitations": "Local synthetic dialogue and small public read-speech development regression. Known homophone failures remain visible. Cloud hardware excluded."
+}

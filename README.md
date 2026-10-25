@@ -8,6 +8,8 @@ Built by **Bola Maged Ramses Nessim**.
 
 The demo follows a ten-turn birthday-picnic planning conversation with a real interruption, with a synthesized demo-user voice and live assistant responses. No narrated walkthrough or mocked replies. See [recording details](docs/demo/README.md).
 
+The recording uses the earlier Nemotron configuration. The current default is Gemma 4 31B, selected using the measured reasoning comparisons below.
+
 The video player and interactive diagram are hosted with GitHub Pages. You can also open them locally as described under [Sharing the demo](#sharing-the-demo).
 
 ## Voice pipeline — inputs and outputs
@@ -45,8 +47,8 @@ CPU/GPU comparisons and limitations. Kokoro's paired 32-phrase generation benchm
 improved from **2.093 s on CPU to 0.418 s on GPU**; this is synthesis timing, not a
 fivefold whole-conversation speedup. Independent recognition returned identical
 transcripts for every paired CPU/GPU output. The original 40-recording STT baseline
-scored **6.60% WER / 2.80% CER** with beam 1; the current beam-3 configuration is
-being requalified.
+scored **6.60% WER / 2.80% CER** with beam 1; the qualified beam-3 image scored
+**6.60% WER / 2.64% CER** on the same human references.
 
 The FastAPI backend provides readiness/configuration/diagnostic HTTP endpoints and
 `WS /ws` for streaming microphone input, recognized text, cloud replies, speech and
@@ -54,7 +56,23 @@ playback acknowledgements. See the [API README](docs/api/README.md) for endpoint
 audio formats and the single-session local scope.
 
 GitHub [offline CI](.github/workflows/tests.yml) runs the pinned installation and unit
-tests on pushes and pull requests. The [GPU release workflow](docs/deployment/README.md) builds and qualifies a container before publication. Its first release passed through anonymous Docker Hub startup verification. A later arithmetic regression correctly blocked publication; the leaner Gemma candidate is being qualified. Offline CI alone does not run the speech/cloud models.
+tests on pushes and pull requests. The [GPU release workflow](docs/deployment/README.md) passed hosted build, actual GPU qualification, Docker Hub publication and anonymous public startup verification. A previous arithmetic regression correctly blocked publication before the model change.
+
+### Qualified GPU image results
+
+| Check | Measured result |
+| --- | --- |
+| Offline regressions / microphone transport | **14/14** tests; 80 queued frames delivered in order |
+| Cloud reasoning regressions | **8/8** required answers |
+| Silero clip activation | **58/58** speech/stress detected; **0/6** non-speech activations |
+| STT | **64/64** executions; 40 human recordings: **6.60% WER / 2.64% CER** |
+| TTS | **32/32** generations/audits; independent recognition agreement **8.52% WER / 7.10% CER** |
+| Connected browser dialogue | **19/21** passed; zero JavaScript errors |
+| First audio after recording ended | **1.99 s median**, **6.18 s p95**, 19 audio-producing turns |
+| Backend RAM / whole-device VRAM | Sampled peaks **1,828 MiB / 1,747 MiB** |
+| Backend CPU | Mean **110%**, peak **351%**, where 100% is one logical core |
+
+Two affect/effect teaching turns remain known limitations. TTS recognition agreement is a proxy, not human listening quality. These are small development suites on one GTX 1660 Ti; sampling can miss peaks. The 31B LLM runs on Ollama Cloud, so its hardware is excluded from local CPU/RAM/VRAM figures. See the [complete report and immutable release evidence](docs/evaluation/README.md).
 
 ## Requirements
 
@@ -70,7 +88,36 @@ tests on pushes and pull requests. The [GPU release workflow](docs/deployment/RE
 
 The exact requirements snapshot includes Linux CUDA libraries and development/recording tools. It is not a universal Windows/macOS dependency set. Native Windows and macOS have not been validated. An Ollama installation is **not** required for direct cloud API calls. FFmpeg and Playwright Chromium are needed only to reproduce documentation media, not for normal conversation.
 
-## Clone and run
+## Run the prebuilt GPU image
+
+**[Public Docker Hub image](https://hub.docker.com/r/bmaged23/voice-conversation)** · [Passing release workflow](https://github.com/bmaged23/voice-conversation/actions/runs/40223674458)
+
+With NVIDIA GPU support enabled in Docker, create a local `.env` containing:
+
+```dotenv
+OLLAMA_API_KEY=your_own_key
+OLLAMA_BASE_URL=https://ollama.com
+OLLAMA_MODEL=gemma4:31b
+```
+
+```bash
+docker pull bmaged23/voice-conversation:gpu
+docker run --rm --gpus all --env-file .env \
+  -p 127.0.0.1:8765:8765 \
+  bmaged23/voice-conversation:gpu
+```
+
+After warmup, open **http://localhost:8765** and allow microphone access. The image includes production speech assets and both runtime environments; this route needs neither Git nor a model download on startup. Your Ollama account needs access and allowance for the selected cloud model. The browser handles microphone/speaker access. Stop with Ctrl+C.
+
+The qualified Linux amd64 image is approximately **3.00 GB compressed** in the registry and reports **8.51 GB** locally, down from **11.9 GB** before sharing CUDA libraries. Allow at least **15 GiB free disk space** for pull/unpacking and working headroom. The tested GPU has 6 GiB VRAM. [Container and release details](docs/deployment/README.md).
+
+For an immutable pull, use:
+
+```bash
+docker pull bmaged23/voice-conversation@sha256:60fe05514e98ac477de8a4a9935f2ab61c6d9f880fd25c37c6c5fda94bfdc7f3
+```
+
+## Clone and run from source
 
 ### 1. Clone the repository
 

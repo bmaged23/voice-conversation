@@ -135,8 +135,56 @@ alternative budgets, expenses, multiplication, division, negatives, decimals and
 
 Answers were manually reviewed; [summary](measurements/reasoning-configuration-comparison.json)
 and [synthetic outputs](measurements/reasoning-configuration-outputs.json) are retained.
-Gemma with thinking off and temperature zero is the next configured candidate.
+Gemma with thinking off and temperature zero is the configured production model.
 These are eight exposed development examples, not general reasoning rankings or
 monetary-price comparisons. The new gate requires all eight reasoning regressions,
 actual VAD clip checks and the existing speech/conversation criteria before publication.
-Final lean-image qualification remains pending.
+Final lean-image qualification passed, as recorded below.
+
+## Final qualified release
+
+[Run 40223674458](https://github.com/bmaged23/voice-conversation/actions/runs/40223674458)
+passed all stages for source **`9ac91404ee1634c512f46e03b263fedb737277c8`**:
+modern pinned hosted CI, image build, trusted GPU gate, public registry transfer,
+Docker Hub overview synchronization, anonymous pull and normal startup on an
+available localhost port. The image is:
+
+```text
+bmaged23/voice-conversation@sha256:60fe05514e98ac477de8a4a9935f2ab61c6d9f880fd25c37c6c5fda94bfdc7f3
+```
+
+[Final gate evidence](measurements/qualified-container.json) confirms 8/8 cloud
+reasoning regressions, VAD64, ASR64, TTS32 with independent audits, and 19/21 browser
+turns. Human ASR WER/CER remained **6.60%/2.64%** after sharing CUDA libraries;
+TTS agreement remained **8.52%/7.10%**. Median warm phrase generation was **0.453 s**.
+The two remaining failures are teaching clarification/examples after the recognizer
+collapses affect/effect. The original dataset, failures and required-case policy remain visible.
+
+[Conversation latency](measurements/conversation-latency.json), across all 19
+audio-producing turns including semantic failures: median **1.987 s**, mean **2.751 s**,
+p95 **6.176 s**, maximum **7.150 s** from input recording end to first audio.
+These exclude user recording duration and full assistant playback duration.
+The sample is too small for a general production tail-latency guarantee.
+
+[Container resources](measurements/container-resources.json) sampled 105 observations
+through the browser dialogue phase. Docker memory averaged **1,784 MiB**, peaking at
+**1,828 MiB**. CPU averaged **110.05%**, peaking at **350.96%**, where 100% represents
+one logical core. Whole-device GPU memory peaked at **1,747 MiB**; GPU utilization
+averaged **18.61%**, peaking at **56%**. Cloud LLM hardware and host browser CPU/RAM
+are excluded from container figures; GPU readings cover the whole device.
+
+Docker's reported image size fell from **11.9 GB to 8.51 GB**, approximately **28.5%**.
+This is local Docker image accounting, not a compressed registry download-size claim.
+Both runtime pin lists remain inside `/app/deployment/runtime-pins`. Revision metadata
+comes after build steps to preserve dependency/model cache reuse across source changes.
+
+Raw stage outputs and audio are preserved privately on the laptop under the CI run ID,
+including failed cases. Public artifacts contain aggregate metrics only. Source-only
+installation, the demo video and diagram controls are separately validated; physical
+microphone acoustics and subjective voice quality remain device-dependent.
+
+An unauthenticated Docker Hub API check confirmed the final `gpu` tag, public
+visibility, matching immutable digest, and updated overview. Registry compressed
+size was **2,999,428,588 bytes**, approximately **3.00 GB**; this is distinct from
+Docker's 8.51 GB local accounting. The superseded local candidate was removed after
+verification, while all published versions remain available.
