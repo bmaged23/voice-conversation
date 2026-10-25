@@ -23,6 +23,8 @@ Credentials are loaded from `.env`; no credential values appear here.
 | `noise_suppression` | `True` |
 | `auto_gain_control` | `True` |
 | `max_buffered_bytes` | `65536` |
+| `max_queued_frames` | `125` |
+| `transport_poll_ms` | `8` |
 | `max_websocket_message_bytes` | `65536` |
 
 ## vad

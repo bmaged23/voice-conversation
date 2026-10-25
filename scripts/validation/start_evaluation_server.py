@@ -1,6 +1,6 @@
 """Isolated opt-in tracing and fault injection for synthetic QA, never normal startup."""
 
-import os, json
+import os
 from contextlib import asynccontextmanager
 import httpx, uvicorn
 from fastapi import Request, HTTPException

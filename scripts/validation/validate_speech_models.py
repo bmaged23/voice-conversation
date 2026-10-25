@@ -1,7 +1,6 @@
 """Exercise real local TTS, Silero VAD and STT; no cloud calls."""
 
 import json
-from pathlib import Path
 import time
 import wave
 

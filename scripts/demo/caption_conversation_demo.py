@@ -1,8 +1,5 @@
 """Generate machine captions from the actual MP4 audio, also checking audibility."""
 
-import json
-from pathlib import Path
-
 from faster_whisper import WhisperModel
 from voice_conversation.settings import ROOT, load_settings
 

@@ -5,6 +5,7 @@ let ws, context, stream, microphone, capture, inputMeter, outputMeter, outputGai
 let queue = [], playing = null, turn = 0, active = false, muted = false, generation = 0;
 let userMessage = null, assistantMessage = null, responsePending = false, totalTurns = 0;
 let timer = null, sessionStart = 0, lastLatency = null;
+let microphoneTransport = null;
 
 function state(mode, detail) {
   const effective = muted && mode === 'listening' ? 'muted' : mode;
@@ -102,6 +103,7 @@ async function listMicrophones() {
 async function stopSession(detail = 'Microphone off') {
   generation++;
   active = false; responsePending = false;
+  microphoneTransport?.close(); microphoneTransport = null;
   haltPlayback();
   clearInterval(timer); timer = null;
   const oldStream = stream, oldContext = context, oldSocket = ws;
@@ -213,12 +215,12 @@ async function startSession() {
         microphone = context.createMediaStreamSource(stream);
         inputMeter = context.createAnalyser(); inputMeter.fftSize = 512;
         capture = new AudioWorkletNode(context, 'microphone-capture');
+        microphoneTransport = new MicrophoneTransport(socket, audioConfig, message => {
+          showError(message); stopSession();
+        });
         capture.port.onmessage = e => {
           if (!active || socket.readyState !== WebSocket.OPEN || token !== generation) return;
-          if (socket.bufferedAmount > audioConfig.max_buffered_bytes) {
-            showError('The audio connection fell behind. Please start a new session.'); stopSession(); return;
-          }
-          socket.send(e.data);
+          microphoneTransport?.push(e.data);
         };
         microphone.connect(inputMeter); inputMeter.connect(capture); capture.connect(context.destination);
       } else onPacket(packet);

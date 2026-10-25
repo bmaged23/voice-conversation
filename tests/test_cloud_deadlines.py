@@ -2,7 +2,6 @@
 
 import asyncio
 from contextlib import asynccontextmanager
-from types import SimpleNamespace
 
 import pytest
 

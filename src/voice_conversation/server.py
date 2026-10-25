@@ -169,13 +169,17 @@ class Session:
             )
 
     def acknowledge(self, packet):
-        self.trace.event("playback_ack", **packet)
-        item = self.outstanding.pop(packet.get("id"), None)
+        identity = packet.get("id")
+        complete = packet.get("complete")
+        if not isinstance(identity, str) or not isinstance(complete, bool):
+            return
+        self.trace.event("playback_ack", id=identity, complete=complete)
+        item = self.outstanding.pop(identity, None)
         if item is None:
             return
         turn, phrase, semaphore = item
         semaphore.release()
-        if packet.get("complete") and turn in self.answers:
+        if complete and turn in self.answers:
             self.answers[turn]["content"] += phrase + " "
 
     async def response(self, audio, segment, turn):

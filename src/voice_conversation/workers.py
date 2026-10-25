@@ -1,6 +1,5 @@
 """Model instances live in separate spawned processes, never reloaded per turn."""
 
-import os
 from pathlib import Path
 
 import numpy as np

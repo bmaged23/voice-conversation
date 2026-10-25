@@ -3,9 +3,7 @@
 import argparse
 import json
 import os
-from pathlib import Path
 import subprocess
-import sys
 import time
 import urllib.error
 import urllib.request
@@ -63,9 +61,9 @@ def main():
     if image["Architecture"] != "amd64" or image["Os"] != "linux":
         raise ValueError("Unsupported image platform")
     mounts = ["--mount", f"type=bind,src={folder},dst=/app/{output}"]
-    logs = folder / 'gpu-worker-logs'
+    logs = folder / "gpu-worker-logs"
     logs.mkdir()
-    mounts += ['--mount', f'type=bind,src={logs},dst=/app/logs']
+    mounts += ["--mount", f"type=bind,src={logs},dst=/app/logs"]
     for name in ["human-inputs-v1", "component-inputs-v1"]:
         mounts += [
             "--mount",

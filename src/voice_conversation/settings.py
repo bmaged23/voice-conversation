@@ -34,6 +34,12 @@ def load_settings():
         raise ValueError("Silero requires 512-sample frames at 16 kHz")
     if config["audio"]["input_channels"] != 1:
         raise ValueError("Only mono microphone capture is implemented")
+    for key in ("max_queued_frames", "transport_poll_ms"):
+        value = config["audio"][key]
+        if type(value) is not int or value < 1:
+            raise ValueError(f"audio.{key} must be a positive integer")
+    if config["audio"]["max_buffered_bytes"] < 2048:
+        raise ValueError("The WebSocket buffer must fit at least one microphone frame")
     if config["server"]["web_workers"] != 1 or config["workers"]["max_sessions"] != 1:
         raise ValueError("This local version supports one web worker and one session")
     if config["workers"]["start_method"] != "spawn":

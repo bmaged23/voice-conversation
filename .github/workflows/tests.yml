@@ -22,3 +22,7 @@ jobs:
           python -m pip check
       - name: Run offline tests
         run: python -m pytest -q
+      - name: Install Chromium for microphone transport checks
+        run: python -m playwright install --with-deps chromium
+      - name: Test ordered microphone bursts and bounded overflow
+        run: python -m scripts.validation.validate_microphone_transport

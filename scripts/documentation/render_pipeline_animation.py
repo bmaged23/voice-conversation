@@ -1,9 +1,7 @@
 """Render the self-contained animated diagram as a GitHub-compatible GIF."""
 
 import asyncio
-from pathlib import Path
 import subprocess
-import time
 
 from playwright.async_api import async_playwright
 from voice_conversation.settings import ROOT

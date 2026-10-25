@@ -194,3 +194,26 @@ async def test_interrupt_packet_precedes_slow_reply_cleanup(session):
     finally:
         allow_cleanup.set()
         await asyncio.wait_for(interruption, 1)
+
+
+@pytest.mark.asyncio
+async def test_malformed_ack_cannot_release_or_credit_a_pending_phrase(session):
+    voice = server.Session(Socket())
+    answer = {"role": "assistant", "content": ""}
+    voice.answers[0] = answer
+    slot = asyncio.Semaphore(0)
+    voice.outstanding["0:1"] = (0, "Unplayed phrase.", slot)
+    for packet in [
+        {"id": [], "complete": True},
+        {"id": "0:1", "complete": "true"},
+        {"id": "0:1"},
+    ]:
+        voice.acknowledge(packet)
+    assert answer["content"] == ""
+    assert "0:1" in voice.outstanding
+    assert slot.locked()
+    voice.acknowledge(
+        {"id": "0:1", "complete": True, "kind": "untrusted-control-field"}
+    )
+    assert answer["content"] == "Unplayed phrase. "
+    assert not slot.locked()
