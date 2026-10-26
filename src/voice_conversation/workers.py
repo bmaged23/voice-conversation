@@ -59,6 +59,19 @@ def transcribe(audio):
     return " ".join(s.text.strip() for s in segments).strip()
 
 
+def transcribe_preview(audio):
+    """Keep incomplete-word previews from monopolizing the final-decode worker."""
+    segments, _ = _model.transcribe(
+        audio,
+        language="en",
+        beam_size=_settings["preview_beam_size"],
+        max_new_tokens=_settings["preview_max_tokens"],
+        vad_filter=False,
+        condition_on_previous_text=False,
+    )
+    return " ".join(segment.text.strip() for segment in segments).strip()
+
+
 def init_tts(settings, root):
     global _voice_process
     if settings["device"] == "cuda" and settings.get("runtime_python"):

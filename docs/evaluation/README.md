@@ -188,3 +188,23 @@ visibility, matching immutable digest, and updated overview. Registry compressed
 size was **2,999,428,588 bytes**, approximately **3.00 GB**; this is distinct from
 Docker's 8.51 GB local accounting. The superseded local candidate was removed after
 verification, while all published versions remain available.
+
+## Clarification repair candidate
+
+The original 21 dialogue inputs and references remain unchanged. A separate bounded
+word-interpretation task now uses explicit supplied meanings to repair recognized
+word identity before that text enters chat memory. Raw ASR output remains unchanged
+for display and WER/CER scoring. No runtime affect/effect mapping is used.
+
+An initial fast proposal incorrectly changed a valid verb use of effect; it was
+rejected. The revised sense-checking prompt with reasoning enabled passed six live
+positive/negative probes. Integrated evaluation then exposed a trigger omission for
+definition pairs without grammatical jargon; that was fixed and all ten frozen
+controls passed, with zero changes on unchanged controls. The controls include valid
+noun/verb senses, invented vocabulary, ordinary statements and literal requests.
+
+All four teaching turns and then all **21/21** native connected turns passed. Source
+is reorganized into HTTP API, cloud transport, interpretation and session modules.
+The release policy now requires every original turn, with no teaching exemptions,
+and all ten interpretation controls. Container qualification is pending for this
+candidate; older release evidence above remains historical.

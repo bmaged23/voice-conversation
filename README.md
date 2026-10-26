@@ -4,6 +4,8 @@ A local voice playground that lets you talk naturally with an AI assistant. Your
 
 Built by **Bola Maged Ramses Nessim**.
 
+The next release adds explicit speech-clarification interpretation: raw STT text stays visible, validated word edits enter memory, and unresolved cases ask for spelling. Native validation now passes all **21/21** original dialogue turns and **10/10** interpretation controls. The strict container rebuild is in progress; previously published measurements remain labelled below.
+
 [![Watch the Voca conversation demo](docs/demo/demo-cover.png)](https://bmaged23.github.io/voice-conversation/demo.html)
 
 The demo follows a ten-turn birthday-picnic planning conversation with a real interruption, with a synthesized demo-user voice and live assistant responses. No narrated walkthrough or mocked replies. See [recording details](docs/demo/README.md).
@@ -58,7 +60,7 @@ audio formats and the single-session local scope.
 GitHub [offline CI](.github/workflows/tests.yml) runs the pinned installation and unit
 tests on pushes and pull requests. The [GPU release workflow](docs/deployment/README.md) passed hosted build, actual GPU qualification, Docker Hub publication and anonymous public startup verification. A previous arithmetic regression correctly blocked publication before the model change.
 
-### Qualified GPU image results
+### Previously qualified GPU image results
 
 | Check | Measured result |
 | --- | --- |
@@ -277,7 +279,10 @@ voice-conversation/
 ├── .github/workflows/          Offline/browser CI and gated image delivery
 ├── evaluation/                 Frozen datasets and explicit release thresholds
 ├── src/voice_conversation/
-│   ├── server.py               WebSocket session and streaming orchestration
+│   ├── server.py               App lifecycle and WebSocket session orchestration
+│   ├── api.py                  Read-only HTTP routes and protocol capabilities
+│   ├── cloud.py                Bounded cloud transport and deadlines
+│   ├── interpretation.py       Validated speech clarification and literal guards
 │   ├── core.py                 Phrase buffering and endpoint detection
 │   ├── workers.py              Speech adapters and Silero ONNX
 │   ├── gpu_voice.py            Isolated persistent CUDA voice process

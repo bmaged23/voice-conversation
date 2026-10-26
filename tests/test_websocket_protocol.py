@@ -58,3 +58,14 @@ def test_malformed_controls_and_frames_do_not_close_session(client):
         socket.send_bytes(b"wrong-size")
         assert socket.receive_json()["type"] == "error"
         assert server.app.state.diagnostics["frames_received"] == 1
+
+
+def test_capabilities_describes_interpretation_without_secrets(client):
+    response = client.get("/capabilities")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["protocol_version"] == 2
+    assert data["interpretation"]["raw_transcript_event"] == "final"
+    assert data["interpretation"]["enabled"] is True
+    assert data["input"]["frame_samples"] == 512
+    assert "api_key" not in response.text and "system_prompt" not in response.text

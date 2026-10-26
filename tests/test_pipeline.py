@@ -217,3 +217,59 @@ async def test_malformed_ack_cannot_release_or_credit_a_pending_phrase(session):
     )
     assert answer["content"] == "Unplayed phrase. "
     assert not slot.locked()
+
+
+@pytest.mark.asyncio
+async def test_interpreted_input_enters_memory_without_rewriting_raw_final(
+    session, monkeypatch
+):
+    from unittest.mock import AsyncMock
+    from voice_conversation.interpretation import Interpretation
+    from voice_conversation.settings import load_config
+
+    raw = (
+        "I mean effect as a verb meaning influence and effect as a noun meaning result."
+    )
+    canonical = raw.replace("effect", "affect", 1)
+    server.app.state.settings["interpretation"] = load_config()["interpretation"]
+    server.app.state.settings["workers"]["llm_token_queue_size"] = 4
+    monkeypatch.setattr(server.app.state, "client", object(), raising=False)
+    monkeypatch.setattr(server, "transcribe", lambda audio: raw)
+    monkeypatch.setattr(
+        server,
+        "interpret_speech",
+        AsyncMock(
+            return_value=Interpretation(
+                raw,
+                canonical,
+                ({"token_index": 2, "source": "effect", "replacement": "affect"},),
+                status="repaired",
+            )
+        ),
+    )
+    captured = []
+
+    async def stream(self, messages, tokens):
+        captured.extend(messages)
+        await tokens.put("Affect means influence. Effect means a result.")
+        await tokens.put(None)
+
+    async def speak(self, phrases, turn):
+        while await phrases.get() is not None:
+            pass
+
+    monkeypatch.setattr(server.Session, "stream_llm", stream)
+    monkeypatch.setattr(server.Session, "speak", speak)
+    socket = Socket()
+    voice = server.Session(socket)
+    with ThreadPoolExecutor(1) as executor:
+        monkeypatch.setattr(server.app.state, "stt", executor, raising=False)
+        await voice.response(np.zeros(512, np.float32), 0, 0)
+    assert next(m for m in captured if m["role"] == "user")["content"] == canonical
+    assert voice.history[0]["content"] == canonical
+    final = next(packet for packet in socket.messages if packet["type"] == "final")
+    assert final["text"] == raw and final["interpretation_pending"] is True
+    interpreted = next(
+        packet for packet in socket.messages if packet["type"] == "interpretation"
+    )
+    assert interpreted["raw_text"] == raw and interpreted["text"] == canonical

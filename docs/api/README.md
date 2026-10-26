@@ -60,3 +60,46 @@ Finalized text and recent conversation history go to Ollama Cloud. Local speech
 models process audio. Normal sessions do not record content; synthetic evaluation
 can explicitly enable private traces. This is a local streaming application API,
 not a multi-user hosted service or an OpenAI-compatible STT/TTS endpoint.
+
+## Protocol 2: explicit speech clarification
+
+`GET /capabilities` reports the protocol version, audio encodings, single-session
+limit and whether interpretation is enabled. It returns no credentials or prompts.
+The existing HTTP endpoints and audio framing remain compatible.
+
+A `final` event always contains the **raw recognizer output**, plus `turn` and
+`interpretation_pending`. Ordinary and exact-repeat turns set pending to false.
+An explicit linguistic clarification can set it to true and produce one subsequent
+`interpretation` event for the same turn:
+
+```json
+{
+  "type": "interpretation",
+  "turn": 2,
+  "raw_text": "I mean effect as a verb meaning influence.",
+  "text": "I mean affect as a verb meaning influence.",
+  "changed": true,
+  "edits": [{"token_index": 2, "source": "effect", "replacement": "affect"}],
+  "needs_clarification": false,
+  "status": "repaired"
+}
+```
+
+Word indices are zero-based word-token indices, not character offsets. Edits are
+validated against the original tokens and limited to clarified-word positions;
+definitions, grammatical labels and unrelated text cannot be rewritten. The browser
+keeps the original message and adds an “Understood as” note when a word changes.
+The server uses the interpreted text in conversation memory so follow-up replies
+keep the intended distinction.
+
+When pending is true, consumers should wait for `interpretation`, an error or a new
+`interrupt`; cancelled turns may never complete interpretation. A false pending
+flag means no interpretation event is expected. Ignore stale-turn events as with
+normal tokens/audio. Status values are `repaired`, `unchanged`, `needs_spelling` or
+`unresolved`; the latter two ask the speaker to spell the intended words rather than
+inventing a correction. Exact-repeat requests bypass this step.
+
+This adds a bounded cloud request only for supported explicit clarification patterns.
+The selected model also receives the transcript and indexed words for that request;
+microphone audio stays local. Settings and the eight-second deadline are in
+`config.py` under `interpretation`. Normal chat keeps its existing streaming path.

@@ -56,6 +56,8 @@ Credentials are loaded from `.env`; no credential values appear here.
 | `beam_size` | `3` |
 | `language` | `en` |
 | `cpu_threads` | `2` |
+| `preview_beam_size` | `1` |
+| `preview_max_tokens` | `48` |
 
 ## llm
 
@@ -74,6 +76,19 @@ Credentials are loaded from `.env`; no credential values appear here.
 | `idle_content_timeout_seconds` | `15` |
 | `system_prompt` | `You are a friendly English voice companion. Answer the latest request directly. Use plain spoken prose without markdown or lists. Usually use one to three short sentences, but include all requested facts even when that takes longer. In summaries preserve people, places, times, numbers, causes and negations; do not replace an event with a different event. A follow-up question does not change earlier facts. Recognize questions from wording even without punctuation. The input comes from speech recognition and may contain homophones. Spelling in the transcript is not authoritative. When the user supplies a definition, use that definition to identify the intended word and explain any likely transcription error. If a requested word comparison repeats the same spelling, explain that the transcription may be ambiguous and ask which spellings the user means; you may suggest a likely intended pair, clearly as a question. Keep corrections and constraints consistent across turns. Follow exact-repeat requests exactly. Never claim to perform actions without confirming tools.` |
 | `think` | `False` |
+
+## interpretation
+
+| Parameter | Default |
+| --- | --- |
+| `enabled` | `True` |
+| `think` | `True` |
+| `max_response_tokens` | `1024` |
+| `timeout_seconds` | `8` |
+| `max_input_characters` | `1600` |
+| `max_word_edits` | `4` |
+| `spelling_question` | `Could you spell the words you mean so I can explain the right distinction?` |
+| `system_prompt` | `First check whether each observed word already has the supplied part of speech and meaning, including less common dictionary senses. If it does, leave it unchanged. Do not substitute a more common homophone for a valid source sense. You repair word identity in automatic English speech transcripts after the speaker supplies a meaning or spelling. Treat the supplied meaning as the intended meaning, not as a mistake to lecture about. If a recognized word conflicts with that meaning, identify the intended English word. Preserve legitimate noun/verb senses of the same word. Make only minimal single-word substitutions. Never change definitions, numbers, names, or other instructions. Do not guess without evidence. Return only JSON: {"edits":[{"token_index":0,"source":"heardword","replacement":"intendedword"}],"needs_clarification":false}. Indices refer to the provided indexed word tokens. Empty edits means no spelling repair. If intent is genuinely unresolved, set needs_clarification true. No explanations or markdown.` |
 
 ## tts
 

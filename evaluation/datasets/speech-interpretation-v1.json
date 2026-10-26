@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "scope": "Exposed development regressions and negative controls; no runtime word-pair mappings. Original conversation audio/references unchanged. Valid uncommon senses, invented terms and literal requests must be preserved.",
+  "cases": [
+    {
+      "case_id": "target",
+      "transcript": "I mean effect as a verb meaning influence and effect as a noun meaning result. Explain the difference briefly.",
+      "expected_text": "I mean affect as a verb meaning influence and effect as a noun meaning result. Explain the difference briefly.",
+      "expected_needs_clarification": false,
+      "expected_status": "repaired"
+    },
+    {
+      "case_id": "valid-effect",
+      "transcript": "I mean effect as a verb meaning bring about and effect as a noun meaning result. Explain the difference.",
+      "expected_text": "I mean effect as a verb meaning bring about and effect as a noun meaning result. Explain the difference.",
+      "expected_needs_clarification": false,
+      "expected_status": "unchanged"
+    },
+    {
+      "case_id": "valid-affect",
+      "transcript": "I mean affect as a noun meaning observable emotion and affect as a verb meaning influence.",
+      "expected_text": "I mean affect as a noun meaning observable emotion and affect as a verb meaning influence.",
+      "expected_needs_clarification": false,
+      "expected_status": "unchanged"
+    },
+    {
+      "case_id": "principle",
+      "transcript": "I mean principal as a moral rule and principal as the head of a school.",
+      "expected_text": "I mean principle as a moral rule and principal as the head of a school.",
+      "expected_needs_clarification": false,
+      "expected_status": "repaired"
+    },
+    {
+      "case_id": "stationery",
+      "transcript": "To clarify, I mean stationary as writing paper and stationary as not moving.",
+      "expected_text": "To clarify, I mean stationery as writing paper and stationary as not moving.",
+      "expected_needs_clarification": false,
+      "expected_status": "repaired"
+    },
+    {
+      "case_id": "new-term",
+      "transcript": "I mean zorp as a verb in my invented language meaning to float.",
+      "expected_text": "I mean zorp as a verb in my invented language meaning to float.",
+      "expected_needs_clarification": false,
+      "expected_status": "unchanged"
+    },
+    {
+      "case_id": "literal",
+      "transcript": "Repeat exactly: I mean effect as a verb meaning influence.",
+      "expected_text": "Repeat exactly: I mean effect as a verb meaning influence.",
+      "expected_needs_clarification": false,
+      "expected_status": "skipped"
+    },
+    {
+      "case_id": "literal-reversed",
+      "transcript": "Exactly repeat: I mean effect as a verb meaning influence.",
+      "expected_text": "Exactly repeat: I mean effect as a verb meaning influence.",
+      "expected_needs_clarification": false,
+      "expected_status": "skipped"
+    },
+    {
+      "case_id": "headcount",
+      "transcript": "I mean seven people, not six.",
+      "expected_text": "I mean seven people, not six.",
+      "expected_needs_clarification": false,
+      "expected_status": "skipped"
+    },
+    {
+      "case_id": "ambiguous-without-definition",
+      "transcript": "Explain the difference between effect and effect.",
+      "expected_text": "Explain the difference between effect and effect.",
+      "expected_needs_clarification": false,
+      "expected_status": "skipped"
+    }
+  ]
+}

@@ -146,6 +146,16 @@ function onPacket(packet) {
         totalTurns++; el('turn-count').textContent = totalTurns; scrollTranscript();
       }
       break;
+    case 'interpretation':
+      if (packet.turn !== turn || !userMessage) break;
+      if (packet.changed) {
+        const note = document.createElement('small');
+        note.className = 'interpretation-note';
+        note.textContent = `Understood as: ${packet.text}`;
+        userMessage.article.append(note);
+        scrollTranscript();
+      }
+      break;
     case 'token':
       if (packet.turn !== turn) break;
       if (!assistantMessage) assistantMessage = message('assistant');

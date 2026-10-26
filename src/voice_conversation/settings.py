@@ -75,4 +75,17 @@ def load_settings():
         raise ValueError("Workers load models once; keep_models_loaded must be True")
     if config["interruptions"]["history_policy"] != "completed_phrases_only":
         raise ValueError("Only completed_phrases_only playback history is implemented")
+    for key in ("preview_beam_size", "preview_max_tokens"):
+        value = config["stt"][key]
+        if type(value) is not int or value <= 0:
+            raise ValueError(f"stt.{key} must be a positive integer")
+    interpretation = config.get("interpretation", {})
+    if interpretation.get("enabled"):
+        for key in ("max_response_tokens", "max_input_characters", "max_word_edits"):
+            if type(interpretation[key]) is not int or interpretation[key] <= 0:
+                raise ValueError(f"interpretation.{key} must be a positive integer")
+        if interpretation["timeout_seconds"] <= 0:
+            raise ValueError("interpretation.timeout_seconds must be positive")
+        if type(interpretation["think"]) is not bool:
+            raise ValueError("interpretation.think must be boolean")
     return config

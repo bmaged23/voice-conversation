@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "scope": "Development regression gate, frozen before container qualification. Not an untouched general-language benchmark.",
   "stt": {
     "cases": 64,
@@ -16,14 +16,10 @@
     "dataset": "evaluation/datasets/conversation-flows-v2.json",
     "inputs": ".evaluation-local/flow-inputs-v2/inputs.json",
     "cases": 21,
-    "minimum_total_passed": 18,
-    "known_quality_limitations": [
-      "teaching-difference",
-      "teaching-clarification",
-      "teaching-examples"
-    ],
+    "minimum_total_passed": 21,
+    "known_quality_limitations": [],
     "require_all_other_cases": true,
-    "explanation": "Small English ASR collapses affect/effect; both tested cloud models sometimes accept the resulting spelling despite supplied definitions. These failures remain scored and published; all other conversation checks must pass. This is not a 21/21 accuracy claim."
+    "explanation": "Every original frozen conversation turn is required. Homophone teaching failures are no longer exempt; raw recognition and interpreted text remain separate."
   },
   "vad": {
     "cases": 64,
@@ -35,5 +31,10 @@
     "cases": 8,
     "required_passed": 8,
     "scope": "Configured production stream on frozen numeric/time development regressions."
+  },
+  "interpretation": {
+    "cases": 10,
+    "required_passed": 10,
+    "false_changes_max": 0
   }
 }

@@ -13,6 +13,9 @@ from fastapi.staticfiles import StaticFiles
 import httpx
 import numpy as np
 
+from .api import router as api_router
+from .cloud import stream_reply
+from .interpretation import interpret_speech, is_candidate
 from .core import Endpoint, PhraseBuffer
 from .pipeline_trace import PipelineTrace
 from .settings import ROOT, load_config, load_settings
@@ -23,6 +26,7 @@ from .workers import (
     ready,
     synthesize,
     transcribe,
+    transcribe_preview,
     warmup_stt,
     warmup_tts,
     shutdown_tts,
@@ -79,6 +83,7 @@ async def lifespan(app):
 
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(api_router)
 WEB = ROOT / load_config()["paths"]["web"]
 app.mount("/static", StaticFiles(directory=WEB), name="static")
 app.mount("/docs", StaticFiles(directory=ROOT / "docs", html=True), name="project-docs")
@@ -87,26 +92,6 @@ app.mount("/docs", StaticFiles(directory=ROOT / "docs", html=True), name="projec
 @app.get("/")
 async def index():
     return FileResponse(WEB / "index.html")
-
-
-@app.get("/health")
-async def health():
-    return {
-        "ready": True,
-        "model": app.state.settings["llm"]["model"],
-        "stt_device": app.state.settings["stt"]["device"],
-        "tts_device": app.state.settings["tts"]["device"],
-    }
-
-
-@app.get("/client-config")
-async def client_config():
-    return app.state.settings["audio"]
-
-
-@app.get("/diagnostics")
-async def diagnostics():
-    return {**app.state.diagnostics, "session_active": app.state.busy}
 
 
 class Session:
@@ -157,7 +142,9 @@ class Session:
 
     async def partial(self, audio, segment):
         try:
-            text = await self.loop.run_in_executor(app.state.stt, transcribe, audio)
+            text = await self.loop.run_in_executor(
+                app.state.stt, transcribe_preview, audio
+            )
             if segment == self.segment:
                 self.trace.event("stt_partial", text=text, turn=self.turn)
                 await self.send("partial", text=text)
@@ -201,11 +188,36 @@ class Session:
             )
             if segment != self.segment or turn != self.turn:
                 return
-            await self.send("final", text=text)
+            interpretation_settings = self.config.get(
+                "interpretation", {"enabled": False}
+            )
+            pending = is_candidate(text, interpretation_settings)
+            await self.send(
+                "final", text=text, turn=turn, interpretation_pending=pending
+            )
             if not text:
                 await self.send("status", text="Listening")
                 return
-            self.history.append({"role": "user", "content": text})
+            if pending:
+                await self.send("status", text="Thinking", turn=turn)
+            interpretation = await interpret_speech(
+                text,
+                app.state.client,
+                self.config["llm"],
+                interpretation_settings,
+            )
+            if segment != self.segment or turn != self.turn:
+                return
+            if interpretation.status != "skipped":
+                self.trace.event(
+                    "speech_interpretation",
+                    turn=turn,
+                    **interpretation.packet(),
+                    duration_seconds=interpretation.seconds,
+                    usage=interpretation.usage,
+                )
+                await self.send("interpretation", turn=turn, **interpretation.packet())
+            self.history.append({"role": "user", "content": interpretation.text})
             answer = {"role": "assistant", "content": ""}
             self.answers[turn] = answer
             limit = self.config["llm"]["history_max_turns"] * 2
@@ -227,7 +239,10 @@ class Session:
             tokens = asyncio.Queue(self.config["workers"]["llm_token_queue_size"])
             await self.send("status", text="Thinking")
             async with asyncio.TaskGroup() as group:
-                group.create_task(self.stream_llm(messages, tokens))
+                if interpretation.needs_clarification:
+                    group.create_task(self.spelling_question(tokens))
+                else:
+                    group.create_task(self.stream_llm(messages, tokens))
                 group.create_task(self.chunk_tokens(tokens, phrases))
                 group.create_task(self.speak(phrases, turn))
             await self.send("status", text="Listening", turn=turn)
@@ -241,69 +256,19 @@ class Session:
                 text="Response failed. Check network access, Ollama quota, and speech model setup.",
             )
 
-    async def stream_llm(self, messages, tokens):
-        settings = self.config["llm"]
-        headers = {"Authorization": "Bearer " + settings["api_key"]}
-        payload = {
-            "model": settings["model"],
-            "messages": messages,
-            "stream": True,
-            "think": settings["think"],
-            "options": {
-                "temperature": settings["temperature"],
-                "num_predict": settings["max_response_tokens"],
-            },
-        }
-        done = False
-        async with app.state.client.stream(
-            "POST",
-            settings["base_url"].rstrip("/") + "/api/chat",
-            headers=headers,
-            json=payload,
-        ) as response:
-            response.raise_for_status()
-            lines = response.aiter_lines().__aiter__()
-            deadline = time.monotonic() + settings["first_content_timeout_seconds"]
-            while True:
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    raise TimeoutError("Cloud content deadline exceeded")
-                try:
-                    line = await asyncio.wait_for(anext(lines), remaining)
-                except StopAsyncIteration:
-                    break
-                if not line:
-                    continue
-                packet = json.loads(line)
-                if packet.get("error"):
-                    raise RuntimeError("Provider stream error")
-                content = packet.get("message", {}).get("content", "")
-                self.trace.event(
-                    "llm_raw",
-                    turn=self.turn,
-                    text=content,
-                    done=packet.get("done", False),
-                    done_reason=packet.get("done_reason"),
-                )
-                if content:
-                    await tokens.put(content)
-                    # Local queue backpressure is not a cloud-provider stall.
-                    deadline = (
-                        time.monotonic() + settings["idle_content_timeout_seconds"]
-                    )
-                if packet.get("done"):
-                    self.trace.event(
-                        "llm_usage",
-                        turn=self.turn,
-                        input_tokens=packet.get("prompt_eval_count"),
-                        output_tokens=packet.get("eval_count"),
-                        total_duration_ns=packet.get("total_duration"),
-                    )
-                    done = True
-                    break
-        if not done:
-            raise RuntimeError("Incomplete provider stream")
+    async def spelling_question(self, tokens):
+        await tokens.put(self.config["interpretation"]["spelling_question"])
         await tokens.put(None)
+
+    async def stream_llm(self, messages, tokens):
+        return await stream_reply(
+            app.state.client,
+            self.config["llm"],
+            messages,
+            tokens,
+            self.trace,
+            self.turn,
+        )
 
     async def chunk_tokens(self, tokens, phrases):
         settings = self.config["tts"]["chunking"]
@@ -343,7 +308,9 @@ class Session:
                 app.state.tts, synthesize, phrase
             )
             self.trace.event(
-                "tts_complete", turn=turn, seconds=time.perf_counter() - started
+                "tts_complete",
+                turn=turn,
+                duration_seconds=time.perf_counter() - started,
             )
             if turn != self.turn:
                 return

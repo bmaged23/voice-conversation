@@ -91,6 +91,22 @@ def main():
             "OLLAMA_MODEL",
             args.image,
             "-m",
+            "scripts.evaluation.evaluate_interpretation",
+            "--output",
+            output + "/interpretation",
+        ]
+    )
+    run(
+        [
+            *base,
+            "-e",
+            "OLLAMA_API_KEY",
+            "-e",
+            "OLLAMA_BASE_URL",
+            "-e",
+            "OLLAMA_MODEL",
+            args.image,
+            "-m",
             "scripts.evaluation.evaluate_llm",
             "--output",
             output + "/llm",
@@ -191,7 +207,7 @@ def main():
             "--inputs",
             policy["browser"]["inputs"],
         ]
-        # Nonzero semantic-test status is assessed against the explicit known-limitations policy below.
+        # Preserve the report, then require every frozen turn to pass below.
         result = subprocess.run(browser_command, cwd=ROOT)
         if result.returncode not in (0, 1):
             raise RuntimeError("Browser harness execution failed")
@@ -206,13 +222,20 @@ def main():
         )
     stt = read(folder / "stt/summary.json")
     llm = read(folder / "llm/summary.json")
+    interpretation = read(folder / "interpretation/summary.json")
     vad = read(folder / "vad/summary.json")
     tts = read(folder / "tts/generation-summary.json")
     audit = read(folder / "tts/audit/summary.json")
     browser = read(folder / "browser/summary.json")
     failures = {row["case_id"] for row in browser["failed"]}
-    accepted = set(policy["browser"]["known_quality_limitations"])
     checks = {
+        "interpretation_controls": interpretation["cases"]
+        == interpretation["passed"]
+        == policy["interpretation"]["cases"],
+        "interpretation_preserves_valid_input": interpretation[
+            "false_changes_on_unchanged_controls"
+        ]
+        <= policy["interpretation"]["false_changes_max"],
         "llm_regressions": llm["cases"] == llm["passed"] == policy["llm"]["cases"]
         and llm["execution_errors"] == 0,
         "vad_complete": vad["cases"] == policy["vad"]["cases"],
@@ -234,7 +257,7 @@ def main():
         "browser_complete": browser["completed"]
         == browser["selected"]
         == policy["browser"]["cases"],
-        "browser_required_cases": not (failures - accepted),
+        "browser_required_cases": not failures,
         "browser_total_floor": browser["passed"]
         >= policy["browser"]["minimum_total_passed"],
         "no_javascript_errors": not browser["javascript_errors"],
@@ -248,11 +271,12 @@ def main():
         "passed": all(checks.values()),
         "stt": stt,
         "llm": llm,
+        "interpretation": interpretation,
         "vad": vad,
         "tts": tts,
         "tts_audit": audit,
         "browser": browser,
-        "limitations": "Local synthetic dialogue and small public read-speech development regression. Known homophone failures remain visible. Cloud hardware excluded.",
+        "limitations": "Small exposed speech and conversation regression suites, including explicit clarification controls; not universal language accuracy. Cloud hardware excluded.",
     }
     (folder / "gate-summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(json.dumps({"passed": summary["passed"], "checks": checks}, indent=2))

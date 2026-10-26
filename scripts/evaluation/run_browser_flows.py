@@ -104,6 +104,20 @@ async def execute(page, case, folder, monitor):
     ]
     errors = [e for e in events if e["type"] == "error"]
     checks = {"no_timeout": failure is None, "session_active": state["active"]}
+    interpreted = [event for event in events if event["type"] == "interpretation"]
+    if interpreted:
+        checks["raw_transcript_preserved"] = all(
+            event["raw_text"] in finals for event in interpreted
+        )
+        checks["raw_transcript_visible"] = (
+            await page.evaluate("userMessage?.body.textContent") == text
+        )
+        changed = [event for event in interpreted if event["changed"]]
+        if changed:
+            notes = await page.locator(".interpretation-note").all_text_contents()
+            checks["interpretation_visible"] = all(
+                any(event["text"] in note for note in notes) for event in changed
+            )
     if case.get("expect_silence"):
         checks.update(
             no_false_turn=not finals, no_false_reply=not audio, no_error=not errors
