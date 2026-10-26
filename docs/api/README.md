@@ -10,11 +10,26 @@ It has no authentication and should remain bound to localhost.
 | `GET /health` | Readiness, configured cloud model and STT/TTS devices |
 | `GET /client-config` | Browser audio framing and capture settings |
 | `GET /diagnostics` | Current session flag and received frame count; no transcripts or credentials |
+| `GET /capabilities` | Protocol version, input/output formats and interpretation support |
 | `WS /ws` | Bidirectional microphone, recognition, response and playback stream |
 
 Health becomes available after model initialization and warmup. Its device fields
 report the configured devices; it does not test cloud quota or predict future requests.
 FastAPI also exposes its generated OpenAPI schema at `/openapi.json`.
+
+## Quick HTTP check
+
+After starting the [Docker image](../../deployment/docker/README.md) or the native
+application, run:
+
+```bash
+curl --fail http://localhost:8765/health
+curl --fail http://localhost:8765/capabilities
+```
+
+The built-in UI at `http://localhost:8765` is a complete streaming client.
+The WebSocket contract below is for integrating another client; sending a text
+prompt to the HTTP health endpoint does not start a conversation.
 
 ## WebSocket protocol
 
@@ -103,3 +118,5 @@ This adds a bounded cloud request only for supported explicit clarification patt
 The selected model also receives the transcript and indexed words for that request;
 microphone audio stays local. Settings and the eight-second deadline are in
 `config.py` under `interpretation`. Normal chat keeps its existing streaming path.
+
+Related guides: [main README](../../README.md), [Docker README](../../deployment/docker/README.md), and [CI/CD README](../deployment/README.md).

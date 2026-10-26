@@ -38,7 +38,7 @@ This is a modular STT → LLM → TTS pipeline. Whisper uses rolling windows rat
 - Exact main environment snapshot in [`requirements.txt`](requirements.txt) and an isolated [GPU voice environment](requirements/tts-gpu.txt).
 - Offline tests, actual speech smoke tests, browser checks and a reproducible demo recorder.
 
-## Evaluation and API
+## Evaluation
 
 ![Measured CPU and GPU component latency](docs/evaluation/charts/component-latency.png)
 
@@ -52,10 +52,41 @@ transcripts for every paired CPU/GPU output. The original 40-recording STT basel
 scored **6.60% WER / 2.80% CER** with beam 1; the qualified beam-3 image scored
 **6.60% WER / 2.64% CER** on the same human references.
 
-The FastAPI backend provides readiness/configuration/diagnostic HTTP endpoints, a protocol `/capabilities` endpoint, and
-`WS /ws` for streaming microphone input, recognized text, cloud replies, speech and
-playback acknowledgements. See the [API README](docs/api/README.md) for endpoints,
-audio formats and the single-session local scope.
+### Qualified GPU image results
+
+| Check | Measured result |
+| --- | --- |
+| Offline regressions / microphone transport | **36/36** tests; 80 queued frames delivered in order |
+| Speech interpretation | **10/10** controls; zero unwanted changes |
+| Cloud reasoning regressions | **8/8** required answers |
+| Silero clip activation | **58/58** speech/stress detected; **0/6** non-speech activations |
+| STT | **64/64** executions; 40 human recordings: **6.60% WER / 2.64% CER** |
+| TTS | **32/32** generations/audits; independent recognition agreement **8.52% WER / 7.10% CER** |
+| Connected browser dialogue | **21/21** passed; zero JavaScript errors |
+| First audio after recording ended | **1.75 s median**, **3.72 s p95**, 19 audio-producing turns |
+| Backend RAM / whole-device VRAM | Sampled peaks **1,390 MiB / 1,375 MiB** |
+| Backend CPU | Mean **97%**, peak **288%**, where 100% is one logical core |
+
+Both affect/effect teaching regressions now pass, with raw recognition unchanged. Explicit clarification checks add a cloud call only on matching inputs: six active control calls had **1.68 s median**, **2.60 s maximum**; four controls skipped the call. TTS recognition agreement is a proxy, not human listening quality. These are small development suites on one GTX 1660 Ti; sampling can miss peaks. The 31B LLM runs on Ollama Cloud, so its hardware is excluded from local CPU/RAM/VRAM figures. See the [complete report and immutable release evidence](docs/evaluation/README.md).
+
+## API — streaming speech and application endpoints
+
+The FastAPI backend provides HTTP readiness, configuration, diagnostics and protocol
+capabilities, plus **`WS /ws`** for the live conversation. Microphone frames flow in;
+recognized text, streamed LLM tokens and ordered speech chunks flow out. Playback
+acknowledgements keep history aligned with what the user actually heard and support
+voice interruption. Start the app through Docker or the source setup below.
+
+| Interface | Purpose |
+| --- | --- |
+| `GET /health` | Readiness and configured model devices |
+| `GET /client-config` | Browser capture and framing settings |
+| `GET /diagnostics` | Session and frame diagnostics |
+| `GET /capabilities` | Protocol version, formats and interpretation support |
+| `WS /ws` | Bidirectional audio, transcripts, response tokens and playback controls |
+
+This API serves one local browser conversation at a time.
+**[Read the API README: endpoints, connection examples, audio formats and streaming events](docs/api/README.md)**.
 
 ## CI/CD — from push to verified image
 
@@ -82,23 +113,6 @@ instructions below. It does not automatically replace a running local applicatio
 · [GPU release workflow](.github/workflows/release.yml)
 · [Verified release run](https://github.com/bmaged23/voice-conversation/actions/runs/40248465601)
 
-### Qualified GPU image results
-
-| Check | Measured result |
-| --- | --- |
-| Offline regressions / microphone transport | **36/36** tests; 80 queued frames delivered in order |
-| Speech interpretation | **10/10** controls; zero unwanted changes |
-| Cloud reasoning regressions | **8/8** required answers |
-| Silero clip activation | **58/58** speech/stress detected; **0/6** non-speech activations |
-| STT | **64/64** executions; 40 human recordings: **6.60% WER / 2.64% CER** |
-| TTS | **32/32** generations/audits; independent recognition agreement **8.52% WER / 7.10% CER** |
-| Connected browser dialogue | **21/21** passed; zero JavaScript errors |
-| First audio after recording ended | **1.75 s median**, **3.72 s p95**, 19 audio-producing turns |
-| Backend RAM / whole-device VRAM | Sampled peaks **1,390 MiB / 1,375 MiB** |
-| Backend CPU | Mean **97%**, peak **288%**, where 100% is one logical core |
-
-Both affect/effect teaching regressions now pass, with raw recognition unchanged. Explicit clarification checks add a cloud call only on matching inputs: six active control calls had **1.68 s median**, **2.60 s maximum**; four controls skipped the call. TTS recognition agreement is a proxy, not human listening quality. These are small development suites on one GTX 1660 Ti; sampling can miss peaks. The 31B LLM runs on Ollama Cloud, so its hardware is excluded from local CPU/RAM/VRAM figures. See the [complete report and immutable release evidence](docs/evaluation/README.md).
-
 ## Requirements
 
 | Item | Supported / tested setup |
@@ -113,7 +127,13 @@ Both affect/effect teaching regressions now pass, with raw recognition unchanged
 
 The exact requirements snapshot includes Linux CUDA libraries and development/recording tools. It is not a universal Windows/macOS dependency set. Native Windows and macOS have not been validated. An Ollama installation is **not** required for direct cloud API calls. FFmpeg and Playwright Chromium are needed only to reproduce documentation media, not for normal conversation.
 
-## Run the prebuilt GPU image
+<a id="run-the-prebuilt-gpu-image"></a>
+
+## Docker — pull and run the application
+
+The public GPU image contains the application, UI, production speech models and
+pinned runtime environments. No Git clone is required for this route.
+**[Read the Docker README: requirements, pull/run, health checks, updates and local builds](deployment/docker/README.md)**.
 
 **[Public Docker Hub image](https://hub.docker.com/r/bmaged23/voice-conversation)** · [Passing release workflow](https://github.com/bmaged23/voice-conversation/actions/runs/40248465601)
 

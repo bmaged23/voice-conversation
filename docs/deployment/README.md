@@ -96,6 +96,8 @@ Documentation-only changes run offline CI without rebuilding or republishing an
 unchanged image. Workflow-file maintenance requires manual release dispatch if a
 new release is needed. Release concurrency queues runs rather than cancelling them.
 
+For everyday image usage, see the dedicated [Docker README](../../deployment/docker/README.md): prerequisites, pull/run, readiness, updates and troubleshooting.
+
 ## Local build (not the prebuilt-image route)
 
 From the repository root, with NVIDIA GPU container support:
