@@ -57,8 +57,30 @@ The FastAPI backend provides readiness/configuration/diagnostic HTTP endpoints, 
 playback acknowledgements. See the [API README](docs/api/README.md) for endpoints,
 audio formats and the single-session local scope.
 
-GitHub [offline CI](.github/workflows/tests.yml) runs the pinned installation and unit
-tests on pushes and pull requests. The [GPU release workflow](docs/deployment/README.md) passed hosted build, actual GPU qualification, Docker Hub publication and anonymous public startup verification. A previous arithmetic regression correctly blocked publication before the model change.
+## CI/CD — from push to verified image
+
+A runtime change pushed to `main` starts this release flow:
+
+**Pinned installation and offline tests → candidate Docker build → exact-image GPU
+evaluation → quality gate → Docker Hub publication → anonymous pull and startup check.**
+
+GitHub-hosted runners install dependencies, run unit and browser microphone checks,
+and build the candidate. Our trusted local GPU runner tests that exact image with
+real speech models, frozen recordings, cloud responses and browser conversations.
+All 21 conversation turns and 10 interpretation controls must pass, alongside the
+STT/TTS and other component thresholds. Failed tests or evaluation block publication.
+The published image keeps the evaluated digest; it is then pulled anonymously and
+started again to verify the public distribution.
+
+Pull requests run offline CI. Documentation-only changes run offline CI without
+rebuilding the image. The GPU runner must be online for GPU release stages.
+CD publishes a verified image; running it on a user's device follows the pull/run
+instructions below. It does not automatically replace a running local application.
+
+**[Read the CI/CD README: stages, triggers, quality gates, credentials and failure behavior](docs/deployment/README.md)**
+· [Offline CI workflow](.github/workflows/tests.yml)
+· [GPU release workflow](.github/workflows/release.yml)
+· [Verified release run](https://github.com/bmaged23/voice-conversation/actions/runs/40248465601)
 
 ### Qualified GPU image results
 
