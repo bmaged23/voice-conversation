@@ -1,10 +1,10 @@
 {
-  "source_sha": "9ac91404ee1634c512f46e03b263fedb737277c8",
-  "run_id": 40223674458,
+  "source_sha": "309554c0036f4c7dcafaea8c652e914ea128fecb",
+  "run_id": 40248465601,
   "first_audio_samples": 19,
-  "median_seconds": 1.9872999999970198,
-  "mean_seconds": 2.7514894736838578,
-  "p95_seconds": 6.176289999997988,
-  "maximum_seconds": 7.15,
-  "scope": "First emitted audio after synthetic input recording ends; all audio-producing turns included, including two semantic failures. Small sample; not full playback duration or a universal latency guarantee."
+  "median_seconds": 1.7502999999998137,
+  "mean_seconds": 2.1737894736842107,
+  "p95_seconds": 3.7193099999995862,
+  "maximum_seconds": 5.444699999999255,
+  "scope": "First emitted audio after synthetic input recording ends; all19 audio-producing turns included. Small development sample; excludes recording and full playback duration. Cloud latency varies."
 }

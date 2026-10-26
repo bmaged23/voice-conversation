@@ -40,7 +40,7 @@ resource measurements. No API keys, private recordings or personal memory are bu
 
 ## Streaming API
 
-The FastAPI application exposes `/health`, `/client-config`, `/diagnostics` and
+The FastAPI application exposes `/health`, `/client-config`, `/diagnostics`, `/capabilities` and
 `WS /ws` for framed microphone audio, STT text, cloud tokens, PCM speech and playback
 acknowledgements. See the [API guide](https://github.com/bmaged23/voice-conversation/blob/main/docs/api/README.md).
 This is not an authenticated multi-user hosted service.
@@ -68,3 +68,23 @@ paired outputs, with WER/CER agreement 8.52%/7.10%; this is not human MOS. The o
 results are reported separately. Component speedups are not whole-conversation speedups.
 
 Models and speech runtimes retain their [upstream notices](https://github.com/bmaged23/voice-conversation/blob/main/docs/notices/README.md).
+
+
+## Verified release — 26 October 2026
+
+[Passing build, GPU gate, publication and public startup](https://github.com/bmaged23/voice-conversation/actions/runs/40248465601).
+Immutable image: `bmaged23/voice-conversation@sha256:9412ef12d312bc2b33a17b63e9acc0247846b941667b7c174764501aca3cf72f`.
+
+The exact container passed **36 offline tests**, **10/10 interpretation controls**,
+**8/8 reasoning cases**, **64/64 STT recordings**, **32/32 TTS generations/audits**
+and **21/21 browser turns**, with zero JavaScript errors. Both previous teaching
+regressions pass; all original turns are mandatory.
+Human STT WER/CER: **6.60%/2.64%**. Independent TTS recognition agreement:
+**8.52%/7.10%** (a proxy, not human listening quality).
+First audio after recording ended: **1.75 s median / 3.72 s p95** over 19 turns.
+Sampled container RAM peaked at **1,390 MiB**, whole-device VRAM at **1,375 MiB**;
+CPU averaged **97%**, peaked at **288%**, where 100% is one core. Cloud hardware is excluded.
+Explicit interpretation adds a separate cloud call only for matching clarifications:
+six active controls took **1.68 s median**, while four controls skipped the call.
+Small exposed development suites and sampled peaks are not universal guarantees.
+See the linked evaluation report for historical failures, method and raw-transcript policy.

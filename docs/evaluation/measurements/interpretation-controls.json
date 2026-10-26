@@ -1,0 +1,15 @@
+{
+  "cases": 10,
+  "passed": 10,
+  "false_changes_on_unchanged_controls": 0,
+  "failed": [],
+  "dataset_sha256": "7e2c831f78503f08f9e25be6d7f561fc0bfdf0aa5e63a081cb530baab9c430b4",
+  "model": "gemma4:31b",
+  "scope": "Exposed development regressions and negative controls; no runtime word-pair mappings. Original conversation audio/references unchanged. Valid uncommon senses, invented terms and literal requests must be preserved.",
+  "active_call_latency_seconds": {
+    "samples": 6,
+    "median": 1.6845027104996007,
+    "maximum": 2.603460656999232
+  },
+  "skipped_controls": 4
+}

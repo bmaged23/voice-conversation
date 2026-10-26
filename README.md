@@ -4,7 +4,7 @@ A local voice playground that lets you talk naturally with an AI assistant. Your
 
 Built by **Bola Maged Ramses Nessim**.
 
-The next release adds explicit speech-clarification interpretation: raw STT text stays visible, validated word edits enter memory, and unresolved cases ask for spelling. Native validation now passes all **21/21** original dialogue turns and **10/10** interpretation controls. The strict container rebuild is in progress; previously published measurements remain labelled below.
+Explicit speech clarifications preserve the raw transcript and show validated word interpretation separately. The qualified container passes **21/21** original conversation turns and **10/10** interpretation controls, including both previously failing teaching turns.
 
 [![Watch the Voca conversation demo](docs/demo/demo-cover.png)](https://bmaged23.github.io/voice-conversation/demo.html)
 
@@ -22,8 +22,8 @@ The video player and interactive diagram are hosted with GitHub Pages. You can a
 
 1. **Capture:** the browser captures your microphone, requests echo cancellation and noise suppression, and sends 16 kHz mono audio in 512-sample frames over a local WebSocket.
 2. **Detect:** Silero VAD on the CPU distinguishes speech from silence. The initial end-of-turn threshold is 700 ms of silence; a turn is capped at 30 seconds.
-3. **Transcribe:** a GPU faster-whisper worker produces rolling previews, then decodes the full turn. Previews stay local; only finalized transcripts go to the LLM.
-4. **Converse:** Gemma 4 31B runs on Ollama Cloud with streaming enabled, thinking disabled, bounded history and short English responses.
+3. **Transcribe:** a GPU faster-whisper worker produces rolling previews, then decodes the full turn. Previews use beam 1 with a 48-token cap; final recognition uses beam 3 without that cap. Previews stay local; finalized transcripts go to the LLM.
+4. **Converse:** explicit word clarifications can first receive a bounded cloud interpretation check. Raw recognition stays visible; validated word edits enter history, and unresolved cases ask for spelling. Ordinary turns skip this extra call. Gemma 4 31B runs on Ollama Cloud with streaming enabled, thinking disabled, bounded history and short English responses.
 5. **Speak:** streamed text is buffered into short phrases. An isolated GPU Kokoro worker synthesizes them while earlier audio plays in the browser. Bounded queues prevent unlimited buffering; CPU synthesis remains configurable.
 6. **Interrupt:** confirmed new speech cancels the response, clears queued audio and stops playback. A short inference already running may finish internally, but its stale output is ignored. History retains only fully played assistant phrases.
 
@@ -52,7 +52,7 @@ transcripts for every paired CPU/GPU output. The original 40-recording STT basel
 scored **6.60% WER / 2.80% CER** with beam 1; the qualified beam-3 image scored
 **6.60% WER / 2.64% CER** on the same human references.
 
-The FastAPI backend provides readiness/configuration/diagnostic HTTP endpoints and
+The FastAPI backend provides readiness/configuration/diagnostic HTTP endpoints, a protocol `/capabilities` endpoint, and
 `WS /ws` for streaming microphone input, recognized text, cloud replies, speech and
 playback acknowledgements. See the [API README](docs/api/README.md) for endpoints,
 audio formats and the single-session local scope.
@@ -60,21 +60,22 @@ audio formats and the single-session local scope.
 GitHub [offline CI](.github/workflows/tests.yml) runs the pinned installation and unit
 tests on pushes and pull requests. The [GPU release workflow](docs/deployment/README.md) passed hosted build, actual GPU qualification, Docker Hub publication and anonymous public startup verification. A previous arithmetic regression correctly blocked publication before the model change.
 
-### Previously qualified GPU image results
+### Qualified GPU image results
 
 | Check | Measured result |
 | --- | --- |
-| Offline regressions / microphone transport | **14/14** tests; 80 queued frames delivered in order |
+| Offline regressions / microphone transport | **36/36** tests; 80 queued frames delivered in order |
+| Speech interpretation | **10/10** controls; zero unwanted changes |
 | Cloud reasoning regressions | **8/8** required answers |
 | Silero clip activation | **58/58** speech/stress detected; **0/6** non-speech activations |
 | STT | **64/64** executions; 40 human recordings: **6.60% WER / 2.64% CER** |
 | TTS | **32/32** generations/audits; independent recognition agreement **8.52% WER / 7.10% CER** |
-| Connected browser dialogue | **19/21** passed; zero JavaScript errors |
-| First audio after recording ended | **1.99 s median**, **6.18 s p95**, 19 audio-producing turns |
-| Backend RAM / whole-device VRAM | Sampled peaks **1,828 MiB / 1,747 MiB** |
-| Backend CPU | Mean **110%**, peak **351%**, where 100% is one logical core |
+| Connected browser dialogue | **21/21** passed; zero JavaScript errors |
+| First audio after recording ended | **1.75 s median**, **3.72 s p95**, 19 audio-producing turns |
+| Backend RAM / whole-device VRAM | Sampled peaks **1,390 MiB / 1,375 MiB** |
+| Backend CPU | Mean **97%**, peak **288%**, where 100% is one logical core |
 
-Two affect/effect teaching turns remain known limitations. TTS recognition agreement is a proxy, not human listening quality. These are small development suites on one GTX 1660 Ti; sampling can miss peaks. The 31B LLM runs on Ollama Cloud, so its hardware is excluded from local CPU/RAM/VRAM figures. See the [complete report and immutable release evidence](docs/evaluation/README.md).
+Both affect/effect teaching regressions now pass, with raw recognition unchanged. Explicit clarification checks add a cloud call only on matching inputs: six active control calls had **1.68 s median**, **2.60 s maximum**; four controls skipped the call. TTS recognition agreement is a proxy, not human listening quality. These are small development suites on one GTX 1660 Ti; sampling can miss peaks. The 31B LLM runs on Ollama Cloud, so its hardware is excluded from local CPU/RAM/VRAM figures. See the [complete report and immutable release evidence](docs/evaluation/README.md).
 
 ## Requirements
 
@@ -92,7 +93,7 @@ The exact requirements snapshot includes Linux CUDA libraries and development/re
 
 ## Run the prebuilt GPU image
 
-**[Public Docker Hub image](https://hub.docker.com/r/bmaged23/voice-conversation)** · [Passing release workflow](https://github.com/bmaged23/voice-conversation/actions/runs/40223674458)
+**[Public Docker Hub image](https://hub.docker.com/r/bmaged23/voice-conversation)** · [Passing release workflow](https://github.com/bmaged23/voice-conversation/actions/runs/40248465601)
 
 With NVIDIA GPU support enabled in Docker, create a local `.env` containing:
 
@@ -116,7 +117,7 @@ The qualified Linux amd64 image is approximately **3.00 GB compressed** in the r
 For an immutable pull, use:
 
 ```bash
-docker pull bmaged23/voice-conversation@sha256:60fe05514e98ac477de8a4a9935f2ab61c6d9f880fd25c37c6c5fda94bfdc7f3
+docker pull bmaged23/voice-conversation@sha256:9412ef12d312bc2b33a17b63e9acc0247846b941667b7c174764501aca3cf72f
 ```
 
 ## Clone and run from source

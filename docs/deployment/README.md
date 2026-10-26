@@ -13,6 +13,7 @@ The [release workflow](../../.github/workflows/release.yml) separates these stag
 4. The container runs offline tests, eight cloud reasoning cases, actual VAD on
    64 clips, 64 frozen ASR cases and 32 TTS phrases.
    An independent local Whisper large-v3 process scores the saved generated audio.
+   Ten explicit speech-interpretation controls check valid repairs and unchanged inputs.
    Chromium runs 21 connected microphone turns against the candidate container.
 5. The explicit [release policy](../../evaluation/release_policy.json) assesses
    completeness, STT WER/CER, TTS recognition agreement and conversation behavior.
@@ -26,12 +27,13 @@ only trusted owner pushes to main or manual releases can reach the GPU pipeline.
 
 ## Quality scope
 
-The 21-turn development suite currently exposes three known homophone-teaching
-limitations. They stay in the total score and raw results. The policy requires all
-18 other cases and at least 18/21 overall; it does not claim perfect teaching or
-21/21 accuracy. Repeatedly exposed development cases are regression checks, not an
-untouched leaderboard benchmark. Numerical thresholds were saved before image
-qualification and must not be lowered to make a candidate pass.
+All **21 original conversation turns** must pass, including teaching clarification
+and follow-up examples. All **10 interpretation controls** must pass with zero
+unwanted changes. A failed case blocks publication; teaching exemptions have been
+removed. Raw STT remains unchanged for display and recognition scoring; validated
+clarified-word edits alone enter chat memory. These repeatedly exposed development
+cases are regression checks, not an untouched benchmark. Thresholds must not be
+lowered to make a candidate pass.
 
 Only aggregate `gate-summary.json` is uploaded publicly. Audio, raw dialogues,
 provider payloads and private evaluation traces stay on the laptop. Cloud calls

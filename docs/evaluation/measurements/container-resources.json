@@ -1,25 +1,25 @@
 {
-  "samples": 105,
+  "samples": 102,
   "metrics": {
     "cpu_percent_one_core": {
-      "mean": 110.04990476190476,
-      "peak": 350.96
+      "mean": 97.32676470588235,
+      "peak": 288.27
     },
     "memory_mib": {
-      "mean": 1784.2436761904762,
-      "peak": 1827.84
+      "mean": 1341.242588235294,
+      "peak": 1389.568
     },
     "pids": {
-      "mean": 70.42857142857143,
-      "peak": 73
+      "mean": 69.46078431372548,
+      "peak": 72
     },
     "gpu_vram_mib": {
-      "mean": 1191.3714285714286,
-      "peak": 1747.0
+      "mean": 1164.078431372549,
+      "peak": 1375.0
     },
     "gpu_util_percent": {
-      "mean": 18.60952380952381,
-      "peak": 56.0
+      "mean": 15.745098039215685,
+      "peak": 66.0
     }
   },
   "scope": "Docker cgroup CPU/memory including speech children; CPU100%=one logical core. GPU is whole-device usage, cloud hardware excluded. Coarse sampling can miss peaks."

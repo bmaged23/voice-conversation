@@ -1,9 +1,9 @@
 {
-  "source_sha": "9ac91404ee1634c512f46e03b263fedb737277c8",
-  "image": "ghcr.io/bmaged23/voice-conversation-candidates@sha256:60fe05514e98ac477de8a4a9935f2ab61c6d9f880fd25c37c6c5fda94bfdc7f3",
-  "image_id": "sha256:60fe05514e98ac477de8a4a9935f2ab61c6d9f880fd25c37c6c5fda94bfdc7f3",
+  "source_sha": "309554c0036f4c7dcafaea8c652e914ea128fecb",
+  "image": "ghcr.io/bmaged23/voice-conversation-candidates@sha256:9412ef12d312bc2b33a17b63e9acc0247846b941667b7c174764501aca3cf72f",
+  "image_id": "sha256:9412ef12d312bc2b33a17b63e9acc0247846b941667b7c174764501aca3cf72f",
   "policy": {
-    "version": 1,
+    "version": 2,
     "scope": "Development regression gate, frozen before container qualification. Not an untouched general-language benchmark.",
     "stt": {
       "cases": 64,
@@ -20,14 +20,10 @@
       "dataset": "evaluation/datasets/conversation-flows-v2.json",
       "inputs": ".evaluation-local/flow-inputs-v2/inputs.json",
       "cases": 21,
-      "minimum_total_passed": 18,
-      "known_quality_limitations": [
-        "teaching-difference",
-        "teaching-clarification",
-        "teaching-examples"
-      ],
+      "minimum_total_passed": 21,
+      "known_quality_limitations": [],
       "require_all_other_cases": true,
-      "explanation": "Small English ASR collapses affect/effect; both tested cloud models sometimes accept the resulting spelling despite supplied definitions. These failures remain scored and published; all other conversation checks must pass. This is not a 21/21 accuracy claim."
+      "explanation": "Every original frozen conversation turn is required. Homophone teaching failures are no longer exempt; raw recognition and interpreted text remain separate."
     },
     "vad": {
       "cases": 64,
@@ -39,9 +35,16 @@
       "cases": 8,
       "required_passed": 8,
       "scope": "Configured production stream on frozen numeric/time development regressions."
+    },
+    "interpretation": {
+      "cases": 10,
+      "required_passed": 10,
+      "false_changes_max": 0
     }
   },
   "checks": {
+    "interpretation_controls": true,
+    "interpretation_preserves_valid_input": true,
     "llm_regressions": true,
     "vad_complete": true,
     "vad_speech_detection": true,
@@ -63,7 +66,7 @@
     "selected": 64,
     "completed": 64,
     "failed": 0,
-    "model_load_seconds": 1.2167793539993,
+    "model_load_seconds": 1.8194338929997684,
     "device": "cuda",
     "human": {
       "reference_words": 1015,
@@ -135,34 +138,34 @@
       "cer": 12.0,
       "exact_rate": 0.3333333333333333
     },
-    "median_decode_seconds": 0.4164241395010322,
-    "median_rtf": 0.04210504879133184,
+    "median_decode_seconds": 0.4792279270000108,
+    "median_rtf": 0.04572321206102454,
     "resources": {
-      "samples": 55,
+      "samples": 62,
       "metrics": {
         "rss_mib": {
-          "mean": 564.4031960227272,
-          "peak": 576.75
+          "mean": 561.8944052419355,
+          "peak": 578.76953125
         },
         "cpu_percent_one_core": {
-          "mean": 332.59818181818184,
-          "peak": 644.5
+          "mean": 298.6258064516129,
+          "peak": 560.4
         },
         "cpu_percent_machine": {
-          "mean": 27.71651515151515,
-          "peak": 53.708333333333336
+          "mean": 24.885483870967743,
+          "peak": 46.699999999999996
         },
         "system_ram_used_mib": {
-          "mean": 2028.1541193181818,
-          "peak": 2071.21484375
+          "mean": 2088.5289188508063,
+          "peak": 2146.04296875
         },
         "gpu_vram_mib": {
-          "mean": 487.3454545454546,
+          "mean": 493.758064516129,
           "peak": 555.0
         },
         "gpu_util_percent": {
-          "mean": 46.89090909090909,
-          "peak": 65.0
+          "mean": 41.16129032258065,
+          "peak": 56.0
         }
       },
       "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
@@ -178,6 +181,15 @@
     "temperature": 0,
     "dataset_sha256": "acf817c2cdca6a74ea8de8f2d7d781839ebb9f4c1c3320a585d2a1ab48c1b683",
     "scope": "Eight exposed development arithmetic/time regressions, configured production streaming function. Required-answer anchors are not a comprehensive semantic judge; no STT/TTS included."
+  },
+  "interpretation": {
+    "cases": 10,
+    "passed": 10,
+    "false_changes_on_unchanged_controls": 0,
+    "failed": [],
+    "dataset_sha256": "7e2c831f78503f08f9e25be6d7f561fc0bfdf0aa5e63a081cb530baab9c430b4",
+    "model": "gemma4:31b",
+    "scope": "Exposed development regressions and negative controls; no runtime word-pair mappings. Original conversation audio/references unchanged. Valid uncommon senses, invented terms and literal requests must be preserved."
   },
   "vad": {
     "cases": 64,
@@ -205,36 +217,36 @@
   "tts": {
     "cases": 32,
     "failed": 0,
-    "model_load_seconds": 3.012506063998444,
+    "model_load_seconds": 4.7090056770002775,
     "device": "cuda",
-    "median_seconds": 0.45327151200035587,
-    "median_rtf": 0.11198399972932954,
+    "median_seconds": 0.5495098960000178,
+    "median_rtf": 0.1426450400074738,
     "resources": {
-      "samples": 35,
+      "samples": 44,
       "metrics": {
         "rss_mib": {
-          "mean": 854.153125,
-          "peak": 957.3984375
+          "mean": 832.6455965909091,
+          "peak": 949.24609375
         },
         "cpu_percent_one_core": {
-          "mean": 91.25142857142858,
-          "peak": 102.5
+          "mean": 89.16818181818182,
+          "peak": 102.1
         },
         "cpu_percent_machine": {
-          "mean": 7.604285714285713,
-          "peak": 8.541666666666666
+          "mean": 7.430681818181818,
+          "peak": 8.508333333333333
         },
         "system_ram_used_mib": {
-          "mean": 2174.698325892857,
-          "peak": 2275.05078125
+          "mean": 2153.8420632102275,
+          "peak": 2228.265625
         },
         "gpu_vram_mib": {
-          "mean": 714.8285714285714,
+          "mean": 705.1136363636364,
           "peak": 937.0
         },
         "gpu_util_percent": {
-          "mean": 31.257142857142856,
-          "peak": 46.0
+          "mean": 23.772727272727273,
+          "peak": 42.0
         }
       },
       "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
@@ -250,8 +262,8 @@
       "word_errors": 35,
       "character_errors": 153,
       "substitutions": 23,
-      "deletions": 9,
-      "insertions": 3,
+      "deletions": 11,
+      "insertions": 1,
       "hallucinated_words_on_empty_reference": 0,
       "samples": 32,
       "wer": 0.0851581508515815,
@@ -259,31 +271,31 @@
       "exact_rate": 0.625
     },
     "resources": {
-      "samples": 76,
+      "samples": 82,
       "metrics": {
         "rss_mib": {
-          "mean": 1896.9504523026317,
-          "peak": 3088.01171875
+          "mean": 1883.2823932926829,
+          "peak": 3082.3828125
         },
         "cpu_percent_one_core": {
-          "mean": 180.75526315789475,
-          "peak": 307.6
+          "mean": 168.62073170731708,
+          "peak": 317.2
         },
         "cpu_percent_machine": {
-          "mean": 15.062938596491227,
-          "peak": 25.633333333333336
+          "mean": 14.051727642276422,
+          "peak": 26.433333333333334
         },
         "system_ram_used_mib": {
-          "mean": 3421.7670127467104,
-          "peak": 4497.30859375
+          "mean": 3317.5533536585367,
+          "peak": 4445.4921875
         },
         "gpu_vram_mib": {
-          "mean": 1735.4868421052631,
+          "mean": 1721.4024390243903,
           "peak": 2283.0
         },
         "gpu_util_percent": {
-          "mean": 65.97368421052632,
-          "peak": 89.0
+          "mean": 59.292682926829265,
+          "peak": 84.0
         }
       },
       "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
@@ -293,22 +305,9 @@
   "browser": {
     "selected": 21,
     "completed": 21,
-    "passed": 19,
+    "passed": 21,
     "javascript_errors": [],
-    "failed": [
-      {
-        "case_id": "teaching-clarification",
-        "checks": [
-          "answer_0"
-        ]
-      },
-      {
-        "case_id": "teaching-examples",
-        "checks": [
-          "answer_0"
-        ]
-      }
-    ],
+    "failed": [],
     "metrics": {
       "reference_words": 276,
       "reference_characters": 1548,
@@ -324,36 +323,36 @@
       "exact_rate": 0.45
     },
     "resources": {
-      "samples": 510,
+      "samples": 489,
       "metrics": {
         "rss_mib": {
-          "mean": 722.2096200980392,
-          "peak": 798.1484375
+          "mean": 716.6734806365031,
+          "peak": 797.4140625
         },
         "cpu_percent_one_core": {
-          "mean": 34.78235294117647,
-          "peak": 108.20000000000002
+          "mean": 35.71390593047035,
+          "peak": 93.4
         },
         "cpu_percent_machine": {
-          "mean": 2.898529411764706,
-          "peak": 9.016666666666667
+          "mean": 2.9761588275391957,
+          "peak": 7.783333333333334
         },
         "system_ram_used_mib": {
-          "mean": 3022.409267769608,
-          "peak": 3126.95703125
+          "mean": 3058.5843718047036,
+          "peak": 3129.89453125
         },
         "gpu_vram_mib": {
-          "mean": 1210.9882352941177,
-          "peak": 1779.0
+          "mean": 1200.1656441717791,
+          "peak": 1407.0
         },
         "gpu_util_percent": {
-          "mean": 18.298039215686273,
-          "peak": 68.0
+          "mean": 16.732106339468302,
+          "peak": 66.0
         }
       },
       "scope": "Process-tree RSS can double-count shared pages; CPU100%=one logical core. GPU is whole-device usage. Coarse samples may miss peaks. Cloud model hardware excluded."
     },
     "scope": "Actual browser, real-time synthetic input, actual model/cloud path except explicitly injected fault. Native process tree includes child server; external-server mode excludes its CPU/RAM."
   },
-  "limitations": "Local synthetic dialogue and small public read-speech development regression. Known homophone failures remain visible. Cloud hardware excluded."
+  "limitations": "Small exposed speech and conversation regression suites, including explicit clarification controls; not universal language accuracy. Cloud hardware excluded."
 }
